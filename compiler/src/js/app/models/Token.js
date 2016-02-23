@@ -149,5 +149,71 @@
 
 			this.set(attrs);
 		}
-		 
- }
+		
+	}, {
+		/**
+		 * Token type constants
+		 */
+		T_NO_MATCH: 0,
+		T_DEFAULT: 1,
+		T_LPAREN: 2,
+		T_RPAREN: 3,
+		T_LBRACE: 4,
+		T_RBRACE: 5,
+		T_QUOTE: 6,
+		T_PRINT: 7,
+		T_EOF: 8,
+		T_WHILE: 9,
+		T_IF: 10,
+		T_DIGIT: 11,
+		T_ID: 12,
+		T_CHAR: 13,
+		T_PLUS: 14,
+		T_SPACE: 15,
+		T_TYPE: 16,
+		T_INT: 17,
+		T_STRING: 18,
+		T_BOOLEAN: 19,
+		T_SINGLE_EQUALS: 20,
+		T_DOUBLE_EQUALS: 21,
+		T_NOT_EQUALS: 22,
+		T_EXCLAMATION_POINT: 23,
+		T_FALSE: 24,
+		T_TRUE: 25,
+		T_WHITE_SPACE: 26,
+		T_STRING_EXPRESSION: 27,
+
+		/**
+		 * Returns an instance of Compiler.Token if the
+		 * specified codeFragment is of a valid token type.
+		 *
+		 * @param {Compiler.CodeFragment} codeFragment
+		 * @returns {null|Compiler.Token}
+		 */
+		getTokenFromCodeFragment: function(codeFragment) {
+			var token = new Token();
+
+			// Iterate over all the token types
+			for (var i = 0; i < 27; i++)
+			{
+				token.set({
+					type: i,
+					code: codeFragment.get('code'),
+					line: codeFragment.get('line')
+				});
+
+				token.setTokenAttributes();
+
+				if (token.isValid())
+				{
+					return token;
+				}
+			}
+
+			return null;
+		}
+	});
+
+	Compiler.Token = Token;
+
+})(Backbone, Compiler);
