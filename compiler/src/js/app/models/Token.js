@@ -1,12 +1,13 @@
 /**
- * Class used to represent tokens founf in the source code.
+ * Class used to represent tokens found in the source code.
  * A token contains attributes to store the token type, code, token type name,
  * regular expression used to identify the token and the line number of where the
  * token is found in the code.
  */
  
  (function (Backbone, Compiler) {
-	 var Token = Backbone.Model.extend({
+	
+	var Token = Backbone.Model.extend({
 		 
 		 defaults: {
 			 type: Token.T_NO_MATCH,
@@ -28,4 +29,11 @@
 		 isValid: function() {
 			return this.get('regex').test(this.get('code'));
 		},
+		
+		/**
+		 * Sets this model's token name and regular expression
+		 * attributes.
+		 */
+		 
+		 
  }
