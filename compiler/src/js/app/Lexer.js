@@ -5,7 +5,7 @@
  */
 
 (function (Backbone, Compiler) {
-	
+
 	var Lexer = Backbone.Model.extend({
 
 		/**
@@ -15,7 +15,7 @@
 		 * @param {String} sourceCode
 		 * @returns {Compiler.Tokens[]} Array of Compiler.Token instances
 		 */
-		 tokenize: function (sourceCode) {
+		tokenize: function (sourceCode) {
 
 			var tokenList = [],
 				stringMode = false,
@@ -67,20 +67,22 @@
 							break;
 
 						case Compiler.Token.T_SINGLE_EQUALS:
+
 							// Next element is available
 							if (!(listIndex + 1 === codeFragmentList.length))
 							{
 								var nextCodeFragment = codeFragmentList[listIndex + 1],
 									nextWord = nextCodeFragment.get('code');
 
-								token = Compiler.Token.getTokenFromCodeFragment(new Compiler.CodeFragment({
+								var tempToken = Compiler.Token.getTokenFromCodeFragment(new Compiler.CodeFragment({
 									code: token.get('code') + nextWord,
 									line: nextCodeFragment.get('line')
 								}));
 
 								// Handle double equals
-								if (token)
+								if (tempToken)
 								{
+									token = tempToken;
 									listIndex++;
 								}
 							}
@@ -138,7 +140,7 @@
 				// EOF should be last element in code list
 				if (listIndex !== codeFragmentList.length)
 				{
-					var eofLine = tokenList[tokenList.length - 1].line;
+					var eofLine = tokenList[tokenList.length - 1].get('line');
 					throw "Input found after EOF character, which was on line " + eofLine + ".";
 				}
 			}
@@ -149,7 +151,7 @@
 
 			return tokenList;
 		},
-		
+
 		/**
 		 * Returns a list of code fragments for the specified source code.
 		 *
@@ -160,8 +162,8 @@
 		getCodeFragments: function(sourceCode) {
 			return this._splitSourceCodeFragmentsOnDelimiters(this._splitSourceCodeOnSpaces(sourceCode));
 		},
-		
-				/**
+
+		/**
 		 * Splits the source code into fragments using the whitespace
 		 * as the delimiter. The fragments are stored in an array of instances of Compiler.CodeFragment.
 		 *
@@ -228,7 +230,7 @@
 
 			return codeFragmentList;
 		},
-		
+
 		/**
 		 * Iterates over the elements in the specified code fragment list
 		 * and splits the code fragments into sub fragments by using the
@@ -248,7 +250,7 @@
 			while (wordIndex !== codeFragmentList.length)
 			{
 				currentFragment = codeFragmentList[wordIndex];
-				currentCode = currentFragment.code;
+				currentCode = currentFragment.get('code');
 
 				for (var charIndex = 0; charIndex !== currentCode.length; charIndex++)
 				{
@@ -284,7 +286,7 @@
 
 						if (subStringBefore.length !== 0)
 						{
-							currentFragment.code = subStringBefore;
+							currentFragment.set('code', subStringBefore);
 							codeFragmentList[wordIndex] = currentFragment;
 						}
 
@@ -293,7 +295,7 @@
 						{
 							var fragment = new Compiler.CodeFragment({
 								code: subStringAfter,
-								line: currentFragment.line
+								line: currentFragment.get('line')
 							});
 
 							codeFragmentList.splice(wordIndex + 1, 0, fragment);
@@ -309,7 +311,7 @@
 
 						if (subStringBefore.length !== 0)
 						{
-							currentFragment.code = subStringBefore;
+							currentFragment.set('code', subStringBefore);
 							codeFragmentList[wordIndex] = currentFragment;
 						}
 
@@ -318,7 +320,7 @@
 						{
 							var fragment = new Compiler.CodeFragment({
 								code: subStringAfter,
-								line: currentFragment.line
+								line: currentFragment.get('line')
 							});
 
 							codeFragmentList.splice(wordIndex + 1, 0, fragment);
@@ -339,7 +341,7 @@
 
 			return codeFragmentList;
 		},
-		
+
 		/**
 		 * Returns the error message for the specified code fragment
 		 * and token type.
