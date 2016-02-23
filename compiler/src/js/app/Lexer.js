@@ -150,6 +150,17 @@
 			return tokenList;
 		},
 		
+		/**
+		 * Returns a list of code fragments for the specified source code.
+		 *
+		 * @param {String} sourceCode
+		 * @returns {Compiler.CodeFragment[]}
+		 *
+		 */
+		getCodeFragments: function(sourceCode) {
+			return this._splitSourceCodeFragmentsOnDelimiters(this._splitSourceCodeOnSpaces(sourceCode));
+		},
+		
 		
 	});
 	
