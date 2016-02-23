@@ -161,7 +161,73 @@
 			return this._splitSourceCodeFragmentsOnDelimiters(this._splitSourceCodeOnSpaces(sourceCode));
 		},
 		
-		
+				/**
+		 * Splits the source code into fragments using the whitespace
+		 * as the delimiter. The fragments are stored in an array of instances of Compiler.CodeFragment.
+		 *
+		 * @param {String} sourceCode
+		 * @returns {Compiler.CodeFragment[]} Array of instances of Compiler.CodeFragment
+		 * @private
+		 */
+		_splitSourceCodeOnSpaces: function (sourceCode) {
+			var codeFragmentList = [],
+				stringMode = false,
+				currentWord = "",
+				currentLine = 1,
+				charIndex = 0;
+
+			while (charIndex !== sourceCode.length)
+			{
+				var currentChar = sourceCode.charAt(charIndex);
+				charIndex++;
+
+				if (!Lexer.WHITE_SPACE_PATTERN.test(currentChar))
+				{
+					currentWord += currentChar;
+				}
+				else
+				{
+					if (stringMode)
+					{
+						currentWord += currentChar;
+					}
+					else if (currentWord.length > 0)
+					{
+						codeFragmentList.push(new Compiler.CodeFragment({
+							code: currentWord,
+							line: currentLine
+						}));
+
+						currentWord = "";
+					}
+				}
+
+				if (Lexer.QUOTE_PATTERN.test(currentChar))
+				{
+					stringMode = stringMode ? false : true;
+				}
+
+				if (charIndex === sourceCode.length)
+				{
+					if (currentWord.length > 0)
+					{
+						codeFragmentList.push(new Compiler.CodeFragment({
+							code: currentWord,
+							line: currentLine
+						}));
+
+						currentWord = "";
+					}
+				}
+
+				if (Lexer.EOL_PATTERN.test(currentChar))
+				{
+					currentLine++;
+				}
+			}
+
+			return codeFragmentList;
+		},
 	});
 	
 }
