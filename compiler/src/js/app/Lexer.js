@@ -228,6 +228,117 @@
 
 			return codeFragmentList;
 		},
+		
+		/**
+		 * Iterates over the elements in the specified code fragment list
+		 * and splits the code fragments into sub fragments by using the
+		 * list of delimiters in Lexer.DELIMITERS_PATTERN.
+		 *
+		 * @param {Compiler.CodeFragment[]} codeFragmentList
+		 * @returns {Compiler.CodeFragment[]}
+		 * @private
+		 */
+		_splitSourceCodeFragmentsOnDelimiters: function (codeFragmentList) {
+			var stringMode = false,
+				delimiterFound = false,
+				currentFragment = null,
+				currentCode = "",
+				wordIndex = 0;
+
+			while (wordIndex !== codeFragmentList.length)
+			{
+				currentFragment = codeFragmentList[wordIndex];
+				currentCode = currentFragment.code;
+
+				for (var charIndex = 0; charIndex !== currentCode.length; charIndex++)
+				{
+					var currentChar = currentCode.charAt(charIndex);
+
+					if (currentCode.length === 1)
+					{
+						if (Lexer.QUOTE_PATTERN.test(currentChar))
+						{
+							stringMode = stringMode ? false : true;
+						}
+
+						continue;
+					}
+
+					if (Lexer.DELIMITERS_PATTERN.test(currentChar))
+					{
+						var beforeIndex = 0,
+							afterIndex = 0;
+
+						// Special case: extract first char of the string
+						if (charIndex === 0)
+						{
+							beforeIndex = afterIndex = charIndex + 1;
+						}
+						else
+						{
+							beforeIndex = afterIndex = charIndex;
+						}
+
+						var subStringBefore = currentCode.substring(0, beforeIndex),
+							subStringAfter = currentCode.substring(afterIndex, currentCode.length);
+
+						if (subStringBefore.length !== 0)
+						{
+							currentFragment.code = subStringBefore;
+							codeFragmentList[wordIndex] = currentFragment;
+						}
+
+						// Insert substring after current index
+						if (subStringAfter.length !== 0)
+						{
+							var fragment = new Compiler.CodeFragment({
+								code: subStringAfter,
+								line: currentFragment.line
+							});
+
+							codeFragmentList.splice(wordIndex + 1, 0, fragment);
+						}
+
+						delimiterFound = true;
+						break;
+					}
+					else if (stringMode)
+					{
+						var subStringBefore = currentChar,
+							subStringAfter = currentCode.substring(1, currentCode.length);
+
+						if (subStringBefore.length !== 0)
+						{
+							currentFragment.code = subStringBefore;
+							codeFragmentList[wordIndex] = currentFragment;
+						}
+
+						// Insert substring after current index
+						if (subStringAfter.length !== 0)
+						{
+							var fragment = new Compiler.CodeFragment({
+								code: subStringAfter,
+								line: currentFragment.line
+							});
+
+							codeFragmentList.splice(wordIndex + 1, 0, fragment);
+						}
+
+						delimiterFound = true;
+						break;
+					}
+				}
+
+				if (!delimiterFound)
+				{
+					wordIndex++;
+				}
+
+				delimiterFound = false;
+			}
+
+			return codeFragmentList;
+		},
 	});
 	
 }
