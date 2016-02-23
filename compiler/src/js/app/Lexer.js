@@ -339,6 +339,41 @@
 
 			return codeFragmentList;
 		},
+		
+		/**
+		 * Returns the error message for the specified code fragment
+		 * and token type.
+		 *
+		 * @param {Compiler.CodeFragment} codeFragment
+		 * @param {Number} tokenType
+		 * @returns {string} Error message
+		 */
+		_getParseErrorMessage: function(codeFragment, tokenType) {
+			var errorMessage = '';
+
+			switch(tokenType)
+			{
+				case Compiler.Token.T_DIGIT:
+					errorMessage = "Error on line {line}: {code} is not a valid string character.";
+					break;
+				case Compiler.T_WHITE_SPACE:
+					errorMessage = "Error on line {line}: Newline is not a valid string character.";
+					break;
+				default:
+					errorMessage = "Error on line {line}: {code} is not a valid lexeme.";
+					break;
+			}
+
+			return errorMessage.replace("{line}", codeFragment.get('line')).replace("{code}", codeFragment.get('code'));
+		}
+
+	}, {
+		WHITE_SPACE_PATTERN: /^[\s|\n]$/,
+		EOL_PATTERN: /^[\r|\n]$/,
+		QUOTE_PATTERN: /^"$/,
+		DELIMITERS_PATTERN: /^[\{\}\(\_\)\$\"!=+]$/
 	});
-	
-}
+
+	Compiler.Lexer = Lexer;
+
+})(Backbone, Compiler);
