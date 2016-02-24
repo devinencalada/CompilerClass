@@ -82,8 +82,31 @@
 			this.consumeToken();
 		},
 
+		/**
+		 * StatementList ::== Statement StatementList
+		 *
+		 * @private
+		 */
 		_parseStatementList: function() {
+			var currentToken = this.getCurrentToken();
 
+			switch(currentToken.get('type'))
+			{
+				case Compiler.Token.T_PRINT:
+				case Compiler.Token.T_ID:
+				case Compiler.Token.T_INT:
+				case Compiler.Token.T_STRING:
+				case Compiler.Token.T_BOOLEAN:
+				case Compiler.Token.T_WHILE:
+				case Compiler.Token.T_IF:
+				case Compiler.Token.T_LBRACE:
+					this._parseStatement();
+					this._parseStatementList();
+					break;
+
+				default:
+					break;
+			}
 		},
 
 		_parseStatement: function() {
