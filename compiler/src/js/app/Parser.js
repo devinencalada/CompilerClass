@@ -38,6 +38,34 @@
 		},
 
 		/**
+		 * TODO: Implemented functionality to parse the code block
+		 *
+		 * @private
+		 */
+		_parseProgram: function () {
+			this._parseEOF();
+		},
+
+		/**
+		 * Parses the EOF token. This method checks
+		 * the current token is the EOF token.
+		 *
+		 * @private
+		 */
+		_parseEOF: function () {
+			var token = this.getCurrentToken();
+
+			if (token.get('type') === Compiler.Token.T_EOF)
+			{
+				this.consumeToken();
+			}
+			else
+			{
+				this._throwExceptionByToken(token);
+			}
+		},
+
+		/**
 		 * Throw exception according to the type of the
 		 * specified token.
 		 *
