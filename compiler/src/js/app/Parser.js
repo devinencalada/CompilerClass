@@ -21,6 +21,11 @@
 			this.tokens = tokens;
 		},
 
+		parse: function() {
+			this._parseProgram();
+			console.log(this.currentTokenIndex);
+		},
+
 		/**
 		 * Wrapper public method to get the current token.
 		 *
@@ -44,6 +49,74 @@
 		 */
 		_parseProgram: function () {
 			this._parseEOF();
+		},
+
+		_parseBlock: function() {
+
+		},
+
+		_parseStatementList: function() {
+
+		},
+
+		_parseStatement: function() {
+
+		},
+
+		_parsePrintStatement: function() {
+
+		},
+
+		_parseAssignmentStatement: function() {
+
+		},
+
+		_parseVariableDeclaration: function() {
+
+		},
+
+		_parseWhileStatement: function() {
+
+		},
+
+		_parseIfStatement: function() {
+
+		},
+
+		_parseExpression: function() {
+
+		},
+
+		_parseIntExpression: function() {
+
+		},
+
+		_parseStringExpression: function() {
+
+		},
+
+		_parseBooleanExpression: function() {
+
+		},
+
+		_parseType: function() {
+
+		},
+
+		_parseId: function() {
+
+		},
+
+		_parseCharList: function() {
+
+		},
+
+		_parseIntOperator: function() {
+
+		},
+
+		_parseBooleanOperator: function() {
+
 		},
 
 		/**
