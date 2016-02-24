@@ -189,6 +189,18 @@
 		},
 
 		/**
+		 * Throws exception using the specified error message.
+		 *
+		 * @param {Number|Compiler.Token} token
+		 * @param {String} message
+		 * @private
+		 */
+		_throwException: function(token, message) {
+			var errorMessage = "Error on line {line}: " + message;
+			throw errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
+		},
+
+		/**
 		 * Throw exception according to the type of the
 		 * specified token.
 		 *
@@ -196,6 +208,11 @@
 		 * @private
 		 */
 		_throwExceptionByToken: function(token) {
+			if(typeof token == 'number')
+			{
+				token = Compiler.Token.getTokenByType(token);
+			}
+
 			var errorMessage = '';
 			switch(token.get('type'))
 			{
