@@ -52,8 +52,34 @@
 			this._parseEOF();
 		},
 
+		/**
+		 * Block ::== { StatementList }
+		 * @private
+		 */
 		_parseBlock: function() {
 
+			// Verify the current token is a "{"
+			var currentToken = this.getCurrentToken();
+			if (currentToken.get('type') !== Compiler.Token.T_LBRACE)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_LBRACE);
+			}
+
+			// Token is a "{"
+			this.consumeToken();
+
+			// Parse the statement list
+			this._parseStatementList();
+
+			// Verify the current token is a "}"
+			currentToken = this.getCurrentToken();
+			if (currentToken.get('type') !== Compiler.Token.T_RBRACE)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_RBRACE);
+			}
+
+			// Token is a "}"
+			this.consumeToken();
 		},
 
 		_parseStatementList: function() {
