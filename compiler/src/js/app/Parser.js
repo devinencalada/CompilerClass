@@ -22,6 +22,22 @@
 		},
 
 		/**
+		 * Returns the next token in the token list
+		 * without updating the currentTokenIndex property.
+		 *
+		 * @returns {Compiler.Token}
+		 */
+		peekAtNextToken: function() {
+			var nextTokenIndex = this.currentTokenIndex + 1;
+			if(nextTokenIndex > this.tokens.length)
+			{
+				return null;
+			}
+
+			return this.tokens[nextTokenIndex];
+		},
+
+		/**
 		 * Returns the next token in the token list.
 		 *
 		 * @returns {Compiler.Token}
