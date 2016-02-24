@@ -22,6 +22,15 @@
 		},
 
 		/**
+		 * Wrapper public method to get the current token.
+		 *
+		 * @returns {Compiler.Token}
+		 */
+		getCurrentToken: function() {
+			return this._getTokenAt();
+		},
+
+		/**
 		 * Throw exception according to the type of the
 		 * specified token.
 		 *
