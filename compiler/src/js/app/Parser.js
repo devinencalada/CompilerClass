@@ -245,7 +245,8 @@
 				expectedToken = Compiler.Token.getTokenByType(expectedToken);
 			}
 
-			throw "Error on line " + token.get('line') + ": Found " + token.get('name') + ", expected " + expectedToken.get('name') + ".";
+			var errorMessage = "Found " + token.get('name') + ", expected " + expectedToken.get('name') + ".";
+			this._throwException(token, errorMessage);
 		},
 
 		/**
