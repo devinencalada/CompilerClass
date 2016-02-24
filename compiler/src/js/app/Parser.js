@@ -109,8 +109,51 @@
 			}
 		},
 
+		/**
+		 * Statement ::== PrintStatement
+		 * Statement ::== AssignmentStatement
+		 * Statement ::== VarDecl
+		 * Statement ::== WhileStatement
+		 * Statement ::== IfStatement
+		 * Statement ::== Block
+		 *
+		 * @private
+		 */
 		_parseStatement: function() {
+			var currentToken = this.getCurrentToken();
 
+			switch (currentToken.get('type'))
+			{
+				case Compiler.Token.T_PRINT:
+					this._parsePrintStatement();
+					break;
+
+				case Compiler.Token.T_ID:
+					this._parseAssignmentStatement();
+					break;
+
+				case Compiler.Token.T_INT:
+				case Compiler.Token.T_STRING:
+				case Compiler.Token.T_BOOLEAN:
+					this._parseVariableDeclaration();
+					break;
+
+				case Compiler.Token.T_WHILE:
+					this._parseWhileStatement();
+					break;
+
+				case Compiler.Token.T_IF:
+					this._parseIfStatement();
+					break;
+
+				case Compiler.Token.T_LBRACE:
+					this._parseBlock();
+					break;
+
+				default:
+					this._throwException(currentToken, '{name} is not the beginning of an statement.');
+					break;
+			}
 		},
 
 		_parsePrintStatement: function() {
