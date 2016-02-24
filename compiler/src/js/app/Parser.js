@@ -161,6 +161,28 @@
 		},
 
 		/**
+		 * Throw exception when the expected token is invalid.
+		 *
+		 * @param {Number|Compiler.Token} token
+		 * @param {Number|Compiler.Token} expectedToken
+		 * @returns {string}
+		 * @private
+		 */
+		_throwInvalidTokenFoundException: function(token, expectedToken) {
+			if(typeof token == 'number')
+			{
+				token = Compiler.Token.getTokenByType(token);
+			}
+
+			if(typeof expectedToken == 'number')
+			{
+				expectedToken = Compiler.Token.getTokenByType(expectedToken);
+			}
+
+			return "Error on line " + token.get('line') + ": Found " + token.get('name') + ", expected " + expectedToken.get('name') + ".";
+		},
+
+		/**
 		 * Returns the token at the specified index.
 		 * The token at the currentTokenIndex is returned if no
 		 * index is specified
