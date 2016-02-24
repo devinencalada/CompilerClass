@@ -31,6 +31,13 @@
 		},
 
 		/**
+		 * Wrapper public method used to advance the current token
+		 */
+		consumeToken: function() {
+			this._getNextToken();
+		},
+
+		/**
 		 * Throw exception according to the type of the
 		 * specified token.
 		 *
