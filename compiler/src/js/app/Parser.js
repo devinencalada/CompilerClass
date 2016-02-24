@@ -228,7 +228,7 @@
 				expectedToken = Compiler.Token.getTokenByType(expectedToken);
 			}
 
-			return "Error on line " + token.get('line') + ": Found " + token.get('name') + ", expected " + expectedToken.get('name') + ".";
+			throw "Error on line " + token.get('line') + ": Found " + token.get('name') + ", expected " + expectedToken.get('name') + ".";
 		},
 
 		/**
