@@ -136,4 +136,6 @@
 		}
 	});
 
-});
+	Compiler.Parser = Parser;
+
+})(Backbone, Compiler);
