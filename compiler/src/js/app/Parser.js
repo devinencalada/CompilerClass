@@ -7,6 +7,14 @@
 
 	var Parser = Backbone.Model.extend({
 
+		/**
+		 * @property {Compiler.Token[]} Array of instances of Compiler.Token
+		 */
+		tokens: null,
+
+		initialize: function(tokens) {
+			this.tokens = tokens;
+		}
 	});
 
 });
