@@ -25,9 +25,11 @@
 		 * Returns the next token in the token list
 		 * without updating the currentTokenIndex property.
 		 *
+		 * @private
+		 *
 		 * @returns {Compiler.Token}
 		 */
-		peekAtNextToken: function() {
+		_peekAtNextToken: function() {
 			var nextTokenIndex = this.currentTokenIndex + 1;
 			if(nextTokenIndex > this.tokens.length)
 			{
@@ -38,11 +40,14 @@
 		},
 
 		/**
+		 * Private method.
 		 * Returns the next token in the token list.
+		 *
+		 * @private
 		 *
 		 * @returns {Compiler.Token}
 		 */
-		getNextToken: function() {
+		_getNextToken: function() {
 			var nextTokenIndex = this.currentTokenIndex + 1;
 			if(nextTokenIndex > this.tokens.length)
 			{
