@@ -211,6 +211,19 @@
 			}
 
 			return null;
+		},
+
+		/**
+		 * Returns and instance of Compiler.Token for the
+		 * specified token type.
+		 *
+		 * @param {Number} type
+		 * @returns {Compiler.Token}
+		 */
+		getTokenByType: function(type) {
+			return new Token({
+				type: type
+			});
 		}
 	});
 
