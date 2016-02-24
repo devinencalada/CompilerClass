@@ -22,6 +22,27 @@
 		},
 
 		/**
+		 * Throw exception according to the type of the
+		 * specified token.
+		 *
+		 * @param {Compiler.Token} token
+		 * @private
+		 */
+		_throwExceptionByToken: function(token) {
+			var errorMessage = '';
+			switch(token.get('type'))
+			{
+				case Compiler.Token.T_EOF:
+					break;
+				default:
+					errorMessage = "\"{name}\" expected on line {line}.";
+					break;
+			}
+
+			throw errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
+		},
+
+		/**
 		 * Returns the token at the specified index.
 		 * The token at the currentTokenIndex is returned if no
 		 * index is specified
