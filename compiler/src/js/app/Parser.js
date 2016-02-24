@@ -22,10 +22,21 @@
 		},
 
 		/**
-		 * Returns the next token in the token list
-		 * without updating the currentTokenIndex property.
+		 * Returns the token at the specified index.
+		 * The token at the currentTokenIndex is returned if no
+		 * index is specified
 		 *
 		 * @private
+		 */
+		_getTokenAt: function(index) {
+			return this.tokens[typeof index == 'undefined' ? this.currentTokenIndex : index];
+		},
+
+		/**
+		 * Private method.
+		 *
+		 * Returns the next token in the token list
+		 * without updating the currentTokenIndex property.
 		 *
 		 * @returns {Compiler.Token}
 		 */
@@ -42,8 +53,6 @@
 		/**
 		 * Private method.
 		 * Returns the next token in the token list.
-		 *
-		 * @private
 		 *
 		 * @returns {Compiler.Token}
 		 */
