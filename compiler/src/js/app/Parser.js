@@ -43,11 +43,12 @@
 		},
 
 		/**
-		 * TODO: Implemented functionality to parse the code block
+		 * Program ::== Block $
 		 *
 		 * @private
 		 */
 		_parseProgram: function () {
+			this._parseBlock();
 			this._parseEOF();
 		},
 
