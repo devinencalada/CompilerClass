@@ -231,8 +231,22 @@
 			this._parseId();
 		},
 
+		/**
+		 * WhileStatement ::== while BooleanExpr Block
+		 *
+		 * @private
+		 */
 		_parseWhileStatement: function() {
 
+			var currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_WHILE)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_WHILE);
+			}
+
+			this.consumeToken();
+			this._parseBooleanExpression();
+			this._parseBlock();
 		},
 
 		_parseIfStatement: function() {
