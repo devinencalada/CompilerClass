@@ -331,8 +331,45 @@
 			this.consumeToken();
 		},
 
+		/**
+		 * BooleanExpr ::== ( Expr boolop Expr )
+		 * BooleanExpr ::== boolval
+		 *
+		 * @private
+		 */
 		_parseBooleanExpression: function() {
 
+			var currentToken = this.getCurrentToken();
+
+			// Is the current token a "(" ?
+			if(currentToken.get('type') === Compiler.Token.T_LPAREN)
+			{
+				// The current token is a "("
+				this.consumeToken();
+
+				this._parseExpression();
+				this._parseBooleanOperator();
+				this._parseExpression();
+
+				// Verify the current token is a ")"
+				currentToken = this.getCurrentToken();
+				if(currentToken.get('type') !== Compiler.Token.T_RPAREN)
+				{
+					this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_RPAREN);
+				}
+
+				// The current token is a ")"
+				this.consumeToken();
+			}
+			else if(currentToken.get('type') === Compiler.Token.T_TRUE
+				|| currentToken.get('type') === Compiler.Token.T_FALSE)
+			{
+				this.consumeToken();
+			}
+			else
+			{
+				this._throwException(currentToken, '{name} is not the beginning of a boolean expression.');
+			}
 		},
 
 		/**
