@@ -239,6 +239,11 @@
 		 * @private
 		 */
 		_throwException: function(token, message) {
+			if(typeof token == 'number')
+			{
+				token = Compiler.Token.getTokenByType(token);
+			}
+
 			var errorMessage = "Error on line {line}: " + message;
 			throw errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
 		},
@@ -247,7 +252,7 @@
 		 * Throw exception according to the type of the
 		 * specified token.
 		 *
-		 * @param {Compiler.Token} token
+		 * @param {Number|Compiler.Token} token
 		 * @private
 		 */
 		_throwExceptionByToken: function(token) {
