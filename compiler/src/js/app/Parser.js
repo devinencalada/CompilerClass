@@ -23,7 +23,6 @@
 
 		parse: function() {
 			this._parseProgram();
-			console.log(this.currentTokenIndex);
 		},
 
 		/**
@@ -300,6 +299,8 @@
 					break;
 
 				default:
+					console.log(this.currentTokenIndex);
+					console.log(currentToken);
 					this._throwException(currentToken, '{name} is not the beginning of any expression.');
 					break;
 			}
@@ -323,16 +324,12 @@
 
 			this.consumeToken();
 
-			try
+			currentToken = this.getCurrentToken();
+			if(currentToken.get('type') === Compiler.Token.T_PLUS)
 			{
 				this._parseIntOperator();
+				this._parseExpression();
 			}
-			catch(err)
-			{
-
-			}
-
-			this._parseExpression();
 		},
 
 		/**
