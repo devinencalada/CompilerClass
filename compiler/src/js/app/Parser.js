@@ -307,8 +307,25 @@
 			this.consumeToken();
 		},
 
+		/**
+		 * boolop ::== == | !=
+		 *
+		 * @private
+		 */
 		_parseBooleanOperator: function() {
 
+			var currentToken = this.getCurrentToken();
+			switch(currentToken.get('type'))
+			{
+				case Compiler.Token.T_DOUBLE_EQUALS:
+				case Compiler.Token.T_NOT_EQUALS:
+					this.consumeToken();
+					break;
+
+				default:
+					this._throwException(currentToken, '{name} is not a valid boolean operator.');
+					break;
+			}
 		},
 
 		/**
