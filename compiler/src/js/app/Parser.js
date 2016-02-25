@@ -301,8 +301,34 @@
 			this._parseExpression();
 		},
 
+		/**
+		 * StringExpr ::== CharList
+		 *
+		 * @private
+		 */
 		_parseStringExpression: function() {
+			// Verify the current token is a quote
+			var currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_QUOTE)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_QUOTE);
+			}
 
+			// The current token is a quote
+			this.consumeToken();
+
+			// Parse the character list
+			this._parseCharList();
+
+			// Verify the current token is a quote
+			currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_QUOTE)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_QUOTE);
+			}
+
+			// The current token is a quote
+			this.consumeToken();
 		},
 
 		_parseBooleanExpression: function() {
