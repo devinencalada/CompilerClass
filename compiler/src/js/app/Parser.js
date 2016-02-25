@@ -253,8 +253,22 @@
 
 		},
 
+		/**
+		 * Id ::== char
+		 *
+		 * @private
+		 */
 		_parseId: function() {
 
+			// Verify the current token is of type T_ID
+			var currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_ID)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_ID);
+			}
+
+			// The current token is valid
+			this.consumeToken();
 		},
 
 		_parseCharList: function() {
