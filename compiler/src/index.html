@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>John Encalada's Compiler</title>
+        <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -15,55 +15,49 @@
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body>
-        <!--[if lt IE 8]>
+
+        <div class="container">
+            <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+            <![endif]-->
 
-        <div class="container">
-		
-				<div class="page-header text-center" id="pageHeader">
-			<h3>Compiler</h3>
-		</div>
+            <div class="page-header">
+                <h1>Lexer and Parser testing <small>Devin Encalada</small></h1>
+            </div>
 
-        <div class="container">
-			<div class="row">
-				<div class="col-sm-6 text-center">
-					<label>Code</label>
-					<br />
-					
-					<textarea name="textboxInputCode"
-						class="form-control noResize"
-						id="textboxInputCode"
-						rows="15"
-						placeholder="Enter your code here..."
-						spellcheck="false"></textarea>
-						<br />
-					<input type="button"
-							id="buttonCompile"
-							name="buttonCompile"
-							class="btn btn-primary btn-md"
-							value="Compile"
-							onclick="compiler.src.js.app.Lexer.tokeni
-							onclick="Compiler.Control.buttonCompileClick(this);">
-					<br />
-				</div>
-				
-				<div class="col-sm-6 text-center" id="divLog">
-					<br />
-			
-					<textarea name="textboxLog"
-						class="form-control noResize"
-						id="textboxLog"
-						rows="15"
-						readonly="readonly"></textarea>
-						<br />
-						<br />
-						<br />
-						
-				</div>
-				
-            <div class="row" id="output">
 
+            <div class="row">
+                <div class="col-xs-5">
+                    <h2>Source Code</h2>
+
+                    <form style="margin-top: 20px">
+                        <div class="form-group">
+                            <label>Select an example</label>
+                            <select class="form-control">
+                                <option value="">Select one</option>
+                                <option value="0">Addition</option>
+                                <option value="1">String</option>
+                                <option value="2">If 1</option>
+                                <option value="3">If 2</option>
+                                <option value="4">If 3</option>
+                                <option value="5">While</option>
+                                <option value="6">Boolean</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Enter code</label>
+                            <textarea class="form-control" rows="10"></textarea>
+                        </div>
+
+                        <button>Submit</button>
+
+                    </form>
+                </div>
+                <div class="col-xs-7" style="border-left: 1px solid #ccc; min-height: 500px">
+                    <h2>Output</h2>
+                    <div id="output"></div>
+                </div>
             </div>
         </div>
 
@@ -79,8 +73,8 @@
         <script src="js/app/Tests.js"></script>
 
         <script type="text/template" id="valid-code-template">
-            <div class="well">
-                <h3>Test program <%= index %></h3>
+            <div>
+                <h3>Test program</h3>
                 <pre><%= source_code %></pre>
                 <h4>Tokens</h4>
                 <pre>
@@ -92,13 +86,11 @@
         </script>
 
         <script type="text/template" id="invalid-code-template">
-            <div class="well">
-                <h3>Test program <%= index %></h3>
+            <div>
+                <h3>Test program</h3>
                 <pre><%= source_code %></pre>
                 <h4>Error</h4>
-                <pre>
-                    <%= error %>
-                </pre>
+                <pre><%= error %></pre>
             </div>
         </script>
 
