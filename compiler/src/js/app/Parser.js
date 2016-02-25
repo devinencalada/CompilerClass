@@ -290,8 +290,21 @@
 			}
 		},
 
+		/**
+		 * intop ::== +
+		 *
+		 * @private
+		 */
 		_parseIntOperator: function() {
+			// Verify the current token a "+"
+			var currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_PLUS)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_PLUS);
+			}
 
+			// The current token is a "+"
+			this.consumeToken();
 		},
 
 		_parseBooleanOperator: function() {
