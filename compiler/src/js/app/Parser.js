@@ -1,6 +1,5 @@
 /**
- * Class used to represent the Parser. The parser class analyzes
- * The parser valid the code is made up of valid sentences.
+ * Top-Down recursive parser used to validate the source code.
  */
 
 (function (Backbone, Compiler) {
@@ -306,8 +305,6 @@
 					break;
 
 				default:
-					console.log(this.currentTokenIndex);
-					console.log(currentToken);
 					this._throwException(currentToken, '{name} is not the beginning of any expression.');
 					break;
 			}
