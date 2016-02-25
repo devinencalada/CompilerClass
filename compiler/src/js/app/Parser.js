@@ -249,8 +249,22 @@
 			this._parseBlock();
 		},
 
+		/**
+		 * IfStatement ::== if BooleanExpr Block
+		 *
+		 * @private
+		 */
 		_parseIfStatement: function() {
 
+			var currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_IF)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_IF);
+			}
+
+			this.consumeToken();
+			this._parseBooleanExpression();
+			this._parseBlock();
 		},
 
 		/**
