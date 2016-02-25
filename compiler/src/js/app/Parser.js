@@ -221,8 +221,14 @@
 			this._parseExpression();
 		},
 
+		/**
+		 * VarDecl ::== type Id
+		 *
+		 * @private
+		 */
 		_parseVariableDeclaration: function() {
-
+			this._parseType();
+			this._parseId();
 		},
 
 		_parseWhileStatement: function() {
