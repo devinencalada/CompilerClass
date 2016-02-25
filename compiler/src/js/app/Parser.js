@@ -271,8 +271,34 @@
 			}
 		},
 
+		/**
+		 * IntExpr ::== digit intop Expr
+		 * IntExpr ::== digit
+		 *
+		 * @private
+		 */
 		_parseIntExpression: function() {
 
+			var currentToken = this.getCurrentToken();
+
+			if(currentToken.get('type') !== Compiler.Token.T_DIGIT)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_DIGIT);
+			}
+
+
+			this.consumeToken();
+
+			try
+			{
+				this._parseIntOperator();
+			}
+			catch(err)
+			{
+
+			}
+
+			this._parseExpression();
 		},
 
 		_parseStringExpression: function() {
