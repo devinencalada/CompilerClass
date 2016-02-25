@@ -17,12 +17,19 @@
 		 */
 		currentTokenIndex: 0,
 
-		initialize: function(tokens) {
-			this.tokens = tokens;
-		},
-
 		parse: function() {
 			this._parseProgram();
+		},
+
+		/**
+		 * Sets the tokens property. Setting the tokens property
+		 * will also reset the currentTokenIndex to 0
+		 *
+		 * @param {Compiler.Token[]} tokens
+		 */
+		setTokens: function(tokens) {
+			this.currentTokenIndex = 0;
+			this.tokens = tokens;
 		},
 
 		/**
