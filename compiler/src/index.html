@@ -20,6 +20,48 @@
         <![endif]-->
 
         <div class="container">
+		
+				<div class="page-header text-center" id="pageHeader">
+			<h3>Compiler</h3>
+		</div>
+
+        <div class="container">
+			<div class="row">
+				<div class="col-sm-6 text-center">
+					<label>Code</label>
+					<br />
+					
+					<textarea name="textboxInputCode"
+						class="form-control noResize"
+						id="textboxInputCode"
+						rows="15"
+						placeholder="Enter your code here..."
+						spellcheck="false"></textarea>
+						<br />
+					<input type="button"
+							id="buttonCompile"
+							name="buttonCompile"
+							class="btn btn-primary btn-md"
+							value="Compile"
+							onclick="compiler.src.js.app.Lexer.tokeni
+							onclick="Compiler.Control.buttonCompileClick(this);">
+					<br />
+				</div>
+				
+				<div class="col-sm-6 text-center" id="divLog">
+					<br />
+			
+					<textarea name="textboxLog"
+						class="form-control noResize"
+						id="textboxLog"
+						rows="15"
+						readonly="readonly"></textarea>
+						<br />
+						<br />
+						<br />
+						
+				</div>
+				
             <div class="row" id="output">
 
             </div>
