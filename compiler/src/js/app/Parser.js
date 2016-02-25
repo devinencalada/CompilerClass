@@ -249,8 +249,27 @@
 
 		},
 
+		/**
+		 * type ::== int | string | boolean
+		 *
+		 * @private
+		 */
 		_parseType: function() {
 
+			var currentToken = this.getCurrentToken();
+
+			switch(currentToken.get('type'))
+			{
+				case Compiler.Token.T_INT:
+				case Compiler.Token.T_STRING:
+				case Compiler.Token.T_BOOLEAN:
+					this.consumeToken();
+					break;
+
+				default:
+					this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_TYPE);
+					break;
+			}
 		},
 
 		/**
