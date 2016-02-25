@@ -156,8 +156,45 @@
 			}
 		},
 
+		/**
+		 * PrintStatement ::== print (Expr)
+		 *
+		 * @private
+		 */
 		_parsePrintStatement: function() {
 
+			// Verify the current token is of type "T_PRINT"
+			var currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_PRINT)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_PRINT);
+			}
+
+			// Token is of type "T_PRINT"
+			this.consumeToken();
+
+			// Verify the current token is a "("
+			currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_LPAREN)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_LPAREN);
+			}
+
+			// Token is a "("
+			this.consumeToken();
+
+			// Parse the expression
+			this._parseExpression();
+
+			// Verify the current token is a ")"
+			currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_RPAREN)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_RPAREN);
+			}
+
+			// Token is a ")"
+			this.consumeToken();
 		},
 
 		_parseAssignmentStatement: function() {
