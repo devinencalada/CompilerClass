@@ -598,7 +598,7 @@
 		 * @private
 		 */
 		_getTokenAt: function(index) {
-			return this.tokens[typeof index == 'undefined' ? this.currentTokenIndex : index];
+			return this.tokens.at(typeof index == 'undefined' ? this.currentTokenIndex : index);
 		},
 
 		/**
@@ -616,7 +616,7 @@
 				return null;
 			}
 
-			return this.tokens[nextTokenIndex];
+			return this.tokens.at(nextTokenIndex);
 		},
 
 		/**
@@ -636,7 +636,7 @@
 			this.currentTokenIndex = nextTokenIndex;
 
 			// Return the token
-			return this.tokens[this.currentTokenIndex];
+			return this.tokens.at(this.currentTokenIndex);
 		}
 	});
 

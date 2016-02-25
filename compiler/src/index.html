@@ -43,7 +43,7 @@
                 <h4>Tokens</h4>
                 <pre>
                     <% _.each(tokens, function(token, key, list) { %>
-                    <%= 'Line ' + token.line + ': [' + token.name + ', ' + token.code + ']' %>
+                    <%= "Line " + token.line + ": " + token.name + " [ " + token.code + " ]" %>
                     <% }) %>
                 </pre>
             </div>

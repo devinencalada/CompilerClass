@@ -17,7 +17,7 @@
 		 */
 		tokenize: function (sourceCode) {
 
-			var tokenList = [],
+			var tokenList = new Backbone.Collection(),
 				stringMode = false,
 				eofFound = false,
 				codeFragmentList = this.getCodeFragments(sourceCode),
@@ -120,7 +120,7 @@
 							break;
 					}
 
-					tokenList.push(token);
+					tokenList.add(token);
 				}
 				else
 				{
@@ -140,7 +140,7 @@
 				// EOF should be last element in code list
 				if (listIndex !== codeFragmentList.length)
 				{
-					var eofLine = tokenList[tokenList.length - 1].get('line');
+					var eofLine = tokenList.at(tokenList.length - 1).get('line');
 					throw "Input found after EOF character, which was on line " + eofLine + ".";
 				}
 			}
@@ -342,6 +342,7 @@
 			return codeFragmentList;
 		},
 
+
 		/**
 		 * Returns the error message for the specified code fragment
 		 * and token type.
@@ -358,7 +359,7 @@
 				case Compiler.Token.T_DIGIT:
 					errorMessage = "Error on line {line}: {code} is not a valid string character.";
 					break;
-				case Compiler.T_WHITE_SPACE:
+				case Compiler.Token.T_WHITE_SPACE:
 					errorMessage = "Error on line {line}: Newline is not a valid string character.";
 					break;
 				default:
