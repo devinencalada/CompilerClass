@@ -233,8 +233,42 @@
 
 		},
 
+		/**
+		 * Expr ::== IntExpr
+		 * Expr ::== StringExpr
+		 * Expr ::== BooleanExpr
+		 * Expr ::== Id
+		 *
+		 * @private
+		 */
 		_parseExpression: function() {
 
+			var currentToken = this.getCurrentToken();
+
+			switch(currentToken.get('type'))
+			{
+				case Compiler.Token.T_DIGIT:
+					this._parseIntExpression();
+					break;
+
+				case Compiler.Token.T_QUOTE:
+					this._parseStringExpression();
+					break;
+
+				case Compiler.Token.T_LPAREN:
+				case Compiler.Token.T_TRUE:
+				case Compiler.Token.T_FALSE:
+					this._parseBooleanExpression();
+					break;
+
+				case Compiler.Token.T_ID:
+					this._parseId();
+					break;
+
+				default:
+					this._throwException(currentToken, '{name} is not the beginning of any expression.');
+					break;
+			}
 		},
 
 		_parseIntExpression: function() {
