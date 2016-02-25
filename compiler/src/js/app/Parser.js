@@ -197,8 +197,28 @@
 			this.consumeToken();
 		},
 
+		/**
+		 * AssignmentStatement ::== Id = Expr
+		 *
+		 * @private
+		 */
 		_parseAssignmentStatement: function() {
 
+			// Parse token of type T_ID
+			this._parseId();
+
+			// Verify the current token is a "="
+			var currentToken = this.getCurrentToken();
+			if(currentToken.get('type') !== Compiler.Token.T_SINGLE_EQUALS)
+			{
+				this._throwInvalidTokenFoundException(currentToken, Compiler.Token.T_SINGLE_EQUALS);
+			}
+
+			// The current token is a "="
+			this.consumeToken();
+
+			// Parse the expression
+			this._parseExpression();
 		},
 
 		_parseVariableDeclaration: function() {
