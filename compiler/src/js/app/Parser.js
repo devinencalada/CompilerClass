@@ -271,8 +271,23 @@
 			this.consumeToken();
 		},
 
+		/**
+		 * CharList ::== char
+		 * CharList ::== space
+		 * CharList ::== ε
+		 *
+		 * @private
+		 */
 		_parseCharList: function() {
 
+			// Verify the current token is a character or white space
+			var currentToken = this.getCurrentToken();
+			if (currentToken.get('type') === Compiler.Token.T_CHAR
+				|| currentToken.get('type') === Compiler.Token.T_WHITE_SPACE)
+			{
+				this.consumeToken();
+				this._parseCharList();
+			}
 		},
 
 		_parseIntOperator: function() {
