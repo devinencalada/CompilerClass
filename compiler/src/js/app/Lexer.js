@@ -17,11 +17,13 @@
 		 */
 		tokenize: function (sourceCode) {
 
+			// Make sure a source code string was provided
 			if(typeof sourceCode != 'string' || sourceCode.trim() == '')
 			{
 				throw "Error! Please provide the source code.";
 			}
 
+			// Initialize variables
 			var tokenList = new Backbone.Collection(),
 				stringMode = false,
 				eofFound = false,
@@ -31,106 +33,101 @@
 
 			while (listIndex !== codeFragmentList.length && !eofFound)
 			{
+				// Get the current code fragment
 				currentFragment = codeFragmentList[listIndex];
 
+				// Check if the current fragment represents a valid token
 				var token = Compiler.Token.getTokenFromCodeFragment(currentFragment);
-
-				if(token)
+				if(!token)
 				{
-					switch (token.get('type'))
-					{
-						case Compiler.Token.T_QUOTE:
-							stringMode = stringMode ? false : true;
-							break;
+					throw this._getParseErrorMessage(currentFragment);
+				}
 
-						case Compiler.Token.T_EOF:
-							eofFound = true;
-							break;
+				// Process the token type
+				switch (token.get('type'))
+				{
+					case Compiler.Token.T_QUOTE:
+						stringMode = stringMode ? false : true;
+						break;
 
-						case Compiler.Token.T_ID:
-							if (stringMode)
-							{
-								token.set('type', Compiler.Token.T_CHAR);
-							}
+					case Compiler.Token.T_EOF:
+						eofFound = true;
+						break;
 
-							break;
+					case Compiler.Token.T_ID:
+						if (stringMode)
+						{
+							token.set('type', Compiler.Token.T_CHAR);
+						}
 
-						case Compiler.Token.T_DIGIT:
-							if (stringMode)
-							{
-								throw this._getParseErrorMessage(currentFragment, Compiler.Token.T_DIGIT);
-							}
+						break;
 
-							break;
+					case Compiler.Token.T_DIGIT:
+						if (stringMode)
+						{
+							throw this._getParseErrorMessage(currentFragment, Compiler.Token.T_DIGIT);
+						}
 
-						case Compiler.Token.T_WHITE_SPACE:
-							if (stringMode && token.get('code') === "\n")
-							{
-								throw this._getParseErrorMessage(currentFragment, Compiler.Token.T_WHITE_SPACE);
-							}
+						break;
 
-							break;
+					case Compiler.Token.T_WHITE_SPACE:
+						if (stringMode && token.get('code') === "\n")
+						{
+							throw this._getParseErrorMessage(currentFragment, Compiler.Token.T_WHITE_SPACE);
+						}
 
-						case Compiler.Token.T_SINGLE_EQUALS:
+						break;
 
-							// Next element is available
-							if (!(listIndex + 1 === codeFragmentList.length))
-							{
-								var nextCodeFragment = codeFragmentList[listIndex + 1],
-									nextWord = nextCodeFragment.get('code');
+					case Compiler.Token.T_SINGLE_EQUALS:
 
-								var tempToken = Compiler.Token.getTokenFromCodeFragment(new Compiler.CodeFragment({
-									code: token.get('code') + nextWord,
-									line: nextCodeFragment.get('line')
-								}));
-
-								// Handle double equals
-								if (tempToken)
-								{
-									token = tempToken;
-									listIndex++;
-								}
-							}
-							else
-							{
-								// Handle single equals otherwise
-							}
-
-							break;
-
-						case Compiler.Token.T_EXCLAMATION_POINT:
-							// No more code follows
-							if ((listIndex + 1) === codeFragmentList.length)
-							{
-								throw this._getParseErrorMessage(currentFragment);
-							}
-
+						// Next element is available
+						if (!(listIndex + 1 === codeFragmentList.length))
+						{
 							var nextCodeFragment = codeFragmentList[listIndex + 1],
 								nextWord = nextCodeFragment.get('code');
 
-							token = Compiler.Token.getTokenFromCodeFragment(new Compiler.CodeFragment({
+							var tempToken = Compiler.Token.getTokenFromCodeFragment(new Compiler.CodeFragment({
 								code: token.get('code') + nextWord,
 								line: nextCodeFragment.get('line')
 							}));
 
-							if (token && token.get('type') === Compiler.Token.T_NOT_EQUALS)
+							// Handle double equals
+							if (tempToken)
 							{
+								token = tempToken;
 								listIndex++;
 							}
-							else
-							{
-								throw this._getParseErrorMessage(currentFragment, Compiler.Token.T_EXCLAMATION_POINT);
-							}
+						}
 
-							break;
-					}
+						break;
 
-					tokenList.add(token);
+					case Compiler.Token.T_EXCLAMATION_POINT:
+
+						// Past end of fragment list
+						if ((listIndex + 1) === codeFragmentList.length)
+						{
+							throw this._getParseErrorMessage(currentFragment);
+						}
+
+						var nextCodeFragment = codeFragmentList[listIndex + 1],
+							nextWord = nextCodeFragment.get('code');
+
+						token = Compiler.Token.getTokenFromCodeFragment(new Compiler.CodeFragment({
+							code: token.get('code') + nextWord,
+							line: nextCodeFragment.get('line')
+						}));
+
+						if (token && token.get('type') !== Compiler.Token.T_NOT_EQUALS)
+						{
+							throw this._getParseErrorMessage(currentFragment, Compiler.Token.T_EXCLAMATION_POINT);
+						}
+
+						listIndex++;
+
+						break;
 				}
-				else
-				{
-					throw this._getParseErrorMessage(currentFragment);
-				}
+
+				tokenList.add(token);
 
 				listIndex++;
 			}
@@ -183,8 +180,10 @@
 		 * @private
 		 */
 		_splitSourceCodeOnSpaces: function (sourceCode) {
+
+			// Initialize variables
 			var codeFragmentList = [],
-				stringMode = false,
+				stringMode = false, // True when the chars of a string are getting processed
 				currentWord = "",
 				currentLine = 1,
 				charIndex = 0;
@@ -200,6 +199,9 @@
 				}
 				else
 				{
+					// Processing the characters of a string.
+					// currentWord is concatenated with the chars of the string until and
+					// ending double quote is found.
 					if (stringMode)
 					{
 						currentWord += currentChar;
@@ -252,6 +254,8 @@
 		 * @private
 		 */
 		_splitSourceCodeFragmentsOnDelimiters: function (codeFragmentList) {
+
+			// Initialize variables
 			var stringMode = false,
 				delimiterFound = false,
 				currentFragment = null,
@@ -263,6 +267,7 @@
 				currentFragment = codeFragmentList[wordIndex];
 				currentCode = currentFragment.get('code');
 
+				// iterate over all the characters in the fragment
 				for (var charIndex = 0; charIndex !== currentCode.length; charIndex++)
 				{
 					var currentChar = currentCode.charAt(charIndex);
@@ -301,7 +306,7 @@
 							codeFragmentList[wordIndex] = currentFragment;
 						}
 
-						// Insert substring after current index
+						// Insert substring as a new code fragment after the current fragment
 						if (subStringAfter.length !== 0)
 						{
 							var fragment = new Compiler.CodeFragment({
@@ -326,7 +331,7 @@
 							codeFragmentList[wordIndex] = currentFragment;
 						}
 
-						// Insert substring after current index
+						// Insert substring as a new code fragment after the current fragment
 						if (subStringAfter.length !== 0)
 						{
 							var fragment = new Compiler.CodeFragment({
