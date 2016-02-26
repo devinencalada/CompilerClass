@@ -53,9 +53,8 @@ $(document).ready(function() {
 		}
 		catch(err)
 		{
-			$outputElem.empty().html(invalidCodeTemplate({
-				source_code: source_code,
-				error: "Lexical " + err
+			$outputElem.empty().html(outputTemplate({
+				source_code: source_code
 			}));
 
 			Compiler.dispatcher.trigger('log', 'error', "Lexical " + err);
