@@ -135,18 +135,29 @@
 				throw "Error! Input was only whitespace, so no tokens were found.";
 			}
 
+			// EOF token found, check if its in the correct place
 			if(eofFound)
 			{
-				// EOF should be last element in code list
+				// EOF token found but not at end of the token list
 				if (listIndex !== codeFragmentList.length)
 				{
 					var eofLine = tokenList.at(tokenList.length - 1).get('line');
 					throw "Input found after EOF character, which was on line " + eofLine + ".";
 				}
 			}
+
+			// Raise a warning and add EOF token to the end of the token list
 			else
 			{
-				throw "EOF character was not found.";
+				Compiler.dispatcher.trigger('log', 'warning', "EOF character was not found. Adding it to the token list.");
+
+				var eofToken = new Compiler.Token({
+					type: Compiler.Token.T_EOF,
+					code: "$",
+					line: tokenList.at(tokenList.length - 1).get('line') + 1
+				});
+
+				tokenList.add(eofToken);
 			}
 
 			return tokenList;
