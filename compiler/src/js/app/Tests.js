@@ -8,6 +8,11 @@ $(document).ready(function() {
 		{ name: "If 3", code: "{\n\tint a\n\ta = 1\n\n\tif(a == 1) {\n\t\ta = 2\n\t}\n\n\tif(a != 1) {\n\t\ta = 3\n\t}\n} $" },
 		{ name: "While", code: "{\n\tint x\n\tx = 0\n\n\twhile (x != 5) \n\t{\n\t\tprint(x)\n\t\tx = 1 + x\n\t}\n} $" },
 		{ name: "Boolean", code: "{\n\tint a\n\ta = 1\n\n\tboolean b\n\tb = (true == (true != (false == (true != (false != (a == a))))))\n\n\tprint(b)\n} $" },
+		{ name: "Type Assignment Error", code: "{\n\tint 7\n\ta = 4\n\n\tint b\n\tb = 2 + a\n} $" },
+		{ name: "Boolean Error", code: "{\n\tint a\n\ta = 4\n\tif (a = 4) {\n\t\tprint(\"hello world\")\n\t}\n} $" },
+		{ name: "Unknown Lexeme Error", code: "{\n\tint a\n\ta = 1\n\n\tif(a == 1) {\n\t\ta = 2\n\t}\n\n\telse(a != 1) {\n\t\ta = 3\n\t}\n} $" },
+		{ name: "Missing Brace/Parenthesis Error", code: "{\n\tint a\n\ta = 4\n\n\tint b\n\tb = 2 + a\n $" },
+		{ name: "Integer over Digit Error", code: "{\n\tint a\n\ta = 42\n\n\tint b\n\tb = 2 + a\n} $" },
 	];
 
 	var outputTemplate = _.template($('#output-template').text()),
