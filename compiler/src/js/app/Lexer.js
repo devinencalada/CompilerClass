@@ -17,6 +17,11 @@
 		 */
 		tokenize: function (sourceCode) {
 
+			if(typeof sourceCode != 'string' || sourceCode.trim() == '')
+			{
+				throw "Error! Please provide the source code.";
+			}
+
 			var tokenList = new Backbone.Collection(),
 				stringMode = false,
 				eofFound = false,
@@ -128,11 +133,6 @@
 				}
 
 				listIndex++;
-			}
-
-			if (tokenList.length === 0)
-			{
-				throw "Error! Input was only whitespace, so no tokens were found.";
 			}
 
 			// EOF token found, check if its in the correct place
