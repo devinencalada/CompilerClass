@@ -7,6 +7,18 @@
 
 	var Logger = Backbone.Model.extend({
 
+		/**
+		 * @property {Backbone.Collection} logs
+		 */
+		logs: null,
+
+		/**
+		 * Initializes the logs collection
+		 */
+		initialize: function() {
+			this.logs = new Backbone.Collection();
+		}
+
 	}, {
 		/**
 		 * Log message types
