@@ -13,7 +13,13 @@
 		 */
 		ERROR: 1,
 		INFO: 2,
-		WARNING: 3
+		WARNING: 3,
+
+		/**
+		 * Log message categories
+		 */
+		LEXER: 1,
+		PARSER: 2
 	});
 
 	Compiler.Logger = Logger;
