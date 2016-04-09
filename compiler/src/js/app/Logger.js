@@ -7,6 +7,13 @@
 
 	var Logger = Backbone.Model.extend({
 
+	}, {
+		/**
+		 * Log message types
+		 */
+		ERROR: 1,
+		INFO: 2,
+		WARNING: 3
 	});
 
 	Compiler.Logger = Logger;
