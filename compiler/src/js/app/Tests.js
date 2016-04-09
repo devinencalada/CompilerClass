@@ -1,28 +1,74 @@
+function printCode(sourceCode) {
+	var sourceCodeTemplate = _.template($('#source-code-template').text());
+	$("#output").append(sourceCodeTemplate({source_code: sourceCode}));
+}
+
+function printTokenList(tokens) {
+	var tokenListTemplate = _.template($('#token-list-template').text());
+	$("#output").append(tokenListTemplate({tokens: tokens.toJSON()}));
+}
+
+function printLog() {
+	// Get the logs
+	var verbose = $('input[type="checkbox"]').prop('checked');
+
+	var logs = new Backbone.Collection(Compiler.Logger.logs.where({
+		verbose: verbose ? 1 : 0
+	}));
+
+	// Reset the logs
+	Compiler.Logger.logs.reset();
+
+	var logTemplate = _.template($('#log-template').text());
+	$("#output").append(logTemplate({logs: logs.toJSON()}));
+}
+
+function runProgram(sourceCode) {
+
+	var lexer = new Compiler.Lexer(),
+		parser = new Compiler.Parser(),
+		tokens = null;
+
+	printCode(sourceCode);
+
+	// Parse the code
+	try
+	{
+		tokens = lexer.tokenize(sourceCode);
+		printTokenList(tokens);
+	}
+	catch(err)
+	{
+		printLog();
+		return;
+	}
+
+	parser.setTokens(tokens);
+
+	try
+	{
+		parser.parse();
+	}
+	catch(err)
+	{
+		printLog();
+		return;
+	}
+
+	printLog();
+}
+
 $(document).ready(function() {
 
 	var testCodeList = [
-		{ name: "Addition", code: "{\n\tint a\n\ta = 4\n\n\tint b\n\tb = 2 + a\n} $" },
-		{ name: "String", code: "{\n\tint a\n\ta = 4\n\tif (a == 4) {\n\t\tprint(\"hello world\")\n\t}\n} $" },
-		{ name: "If 1", code: "{\n\tif (1 == 1) {\n\t\tint a\n\t\ta = 1\n\t}\n} $" },
-		{ name: "If 2", code: "{\n\tif (1 != 2) {\n\t\tint a\n\t\ta = 1\n\t}\n} $" },
-		{ name: "If 3", code: "{\n\tint a\n\ta = 1\n\n\tif(a == 1) {\n\t\ta = 2\n\t}\n\n\tif(a != 1) {\n\t\ta = 3\n\t}\n} $" },
-		{ name: "While", code: "{\n\tint x\n\tx = 0\n\n\twhile (x != 5) \n\t{\n\t\tprint(x)\n\t\tx = 1 + x\n\t}\n} $" },
-		{ name: "Boolean", code: "{\n\tint a\n\ta = 1\n\n\tboolean b\n\tb = (true == (true != (false == (true != (false != (a == a))))))\n\n\tprint(b)\n} $" },
-		{ name: "Type Assignment Error", code: "{\n\tint 7\n\ta = 4\n\n\tint b\n\tb = 2 + a\n} $" },
-		{ name: "Boolean Error", code: "{\n\tint a\n\ta = 4\n\tif (a = 4) {\n\t\tprint(\"hello world\")\n\t}\n} $" },
-		{ name: "Unknown Lexeme Error", code: "{\n\tint a\n\ta = 1\n\n\tif(a == 1) {\n\t\ta = 2\n\t}\n\n\telse(a != 1) {\n\t\ta = 3\n\t}\n} $" },
-		{ name: "Missing Brace/Parenthesis Error", code: "{\n\tint a\n\ta = 4\n\n\tint b\n\tb = 2 + a\n $" },
-		{ name: "Integer over Digit Error", code: "{\n\tint a\n\ta = 42\n\n\tint b\n\tb = 2 + a\n} $" },
+		{ name: "Addition", code: "\n{\n\tint a\n\ta = 4\n\n\tint b\n\tb = 2 + a\n} $\n" },
+		{ name: "String", code: "\n{\n\tint a\n\ta = 4\n\tif (a == 4) {\n\t\tprint(\"hello world\")\n\t}\n} $\n" },
+		{ name: "If 1", code: "\n{\n\tif (1 == 1) {\n\t\tint a\n\t\ta = 1\n\t}\n} $\n" },
+		{ name: "If 2", code: "\n{\n\tif (1 != 2) {\n\t\tint a\n\t\ta = 1\n\t}\n} $\n" },
+		{ name: "If 3", code: "\n{\n\tint a\n\ta = 1\n\n\tif(a == 1) {\n\t\ta = 2\n\t}\n\n\tif(a != 1) {\n\t\ta = 3\n\t}\n} $\n" },
+		{ name: "While", code: "\n{\n\tint x\n\tx = 0\n\n\twhile (x != 5) \n\t{\n\t\tprint(x)\n\t\tx = 1 + x\n\t}\n} $\n" },
+		{ name: "Boolean", code: "\n{\n\tint a\n\ta = 1\n\n\tboolean b\n\tb = (true == (true != (false == (true != (false != (a == a))))))\n\n\tprint(b)\n} $\n" },
 	];
-
-	var outputTemplate = _.template($('#output-template').text()),
-		lexer = new Compiler.Lexer(),
-		parser = new Compiler.Parser(),
-		tokens = null,
-		$outputElem = $("#output"),
-		$textAreaElem = $("textarea"),
-		$warningsLogElem = $("#warnings-log"),
-		$errorsLogElem = $("#errors-log");
 
 	// Populate the textarea when a selection has been made
 	// in the tests examples.
@@ -30,7 +76,21 @@ $(document).ready(function() {
 		var value = $(this).val();
 		if(value !== "")
 		{
-			$textAreaElem.val(testCodeList[value].code);
+			var code = '';
+
+			if(value == testCodeList.length)
+			{
+				for(var i = 0; i < testCodeList.length; i++)
+				{
+					code += testCodeList[i].code;
+				}
+			}
+			else
+			{
+				code = testCodeList[value].code;
+			}
+
+			$("textarea").val(code);
 		}
 	});
 
@@ -38,65 +98,26 @@ $(document).ready(function() {
 	$("form").on("submit", function(e) {
 		e.preventDefault();
 
-		// Reset output elements
-		$warningsLogElem.hide().find('pre').empty();
-		$errorsLogElem.hide().find('pre').empty();
-		$outputElem.empty();
-
 		// Get the source code from the textarea
-		var source_code = $textAreaElem.val().trim();
-		if(source_code == '')
+		var sourceCode = $("textarea").val().trim();
+		if(sourceCode == '')
 		{
 			alert('Please enter a code block.');
 			return;
 		}
 
-		// Parse the code
-		try
+		// Reset output elements
+		$("#output").empty();
+
+		var sourceCodes = sourceCode.split("$");
+
+		for(var i = 0; i < sourceCodes.length; i++)
 		{
-			tokens = lexer.tokenize(source_code);
-		}
-		catch(err)
-		{
-			$outputElem.empty().html(outputTemplate({
-				source_code: source_code
-			}));
-
-			Compiler.dispatcher.trigger('log', 'error', "Lexical " + err);
-
-			return;
-		}
-
-		parser.setTokens(tokens);
-
-		try
-		{
-			parser.parse();
-
-			$outputElem.html(outputTemplate({
-				source_code: source_code,
-				tokens: tokens.toJSON()
-			}));
-		}
-		catch(err)
-		{
-			$outputElem.html(outputTemplate({
-				source_code: source_code
-			}));
-
-			Compiler.dispatcher.trigger('log', 'error', "Parsing " + err);
-		}
-	});
-
-	// Listen to the "log" event to update error and warning log elements
-	Compiler.dispatcher.on('log', function(type, message) {
-		if(type == 'warning')
-		{
-			$warningsLogElem.show().find('pre').append(" - " + message);
-		}
-		else
-		{
-			$errorsLogElem.show().find('pre').append(" - " + message);
+			var sourceCode = sourceCodes[i].trim();
+			if(sourceCode != '')
+			{
+				runProgram(sourceCode + "$");
+			}
 		}
 	});
 });
