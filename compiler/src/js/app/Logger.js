@@ -17,6 +17,20 @@
 		 */
 		initialize: function() {
 			this.logs = new Backbone.Collection();
+		},
+
+		/**
+		 *
+		 * @param {String} message - Log message
+		 * @param {Int} type - Log message type
+		 * @param {Int} category - Log message category
+		 */
+		log: function(message, type, category) {
+			this.logs.add({
+				message: message,
+				type: type,
+				category: category
+			});
 		}
 
 	}, {
