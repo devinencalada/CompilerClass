@@ -31,7 +31,7 @@
 				message: message,
 				type: type,
 				category: category,
-				verbose: verbose ? true : false
+				verbose: verbose ? 1 : 0
 			});
 		},
 
