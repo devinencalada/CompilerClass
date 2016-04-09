@@ -23,6 +23,8 @@
 				throw "Error! Please provide the source code.";
 			}
 
+			Compiler.Logger.log('Performing Lexical Analysis', Compiler.Logger.INFO, Compiler.Logger.LEXER);
+
 			// Initialize variables
 			var tokenList = new Backbone.Collection(),
 				stringMode = false,
@@ -139,14 +141,21 @@
 				if (listIndex !== codeFragmentList.length)
 				{
 					var eofLine = tokenList.at(tokenList.length - 1).get('line');
-					throw "Input found after EOF character, which was on line " + eofLine + ".";
+
+					var errorMessage = "Input found after EOF character, which was on line " + eofLine + ".";
+
+					Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.LEXER);
+
+					throw errorMessage;
 				}
 			}
 
 			// Raise a warning and add EOF token to the end of the token list
 			else
 			{
-				Compiler.dispatcher.trigger('log', 'warning', "EOF character was not found. Adding it to the token list.");
+				var warningMessage = 'EOF character was not found. Adding it to the token list.';
+
+				Compiler.Logger.log(warningMessage, Compiler.Logger.WARNING, Compiler.Logger.LEXER);
 
 				var eofToken = new Compiler.Token({
 					type: Compiler.Token.T_EOF,
@@ -156,6 +165,8 @@
 
 				tokenList.add(eofToken);
 			}
+
+			Compiler.Logger.log('Lexical analysis produced ' + Compiler.Logger.getCount(Compiler.Logger.ERROR, Compiler.Logger.LEXER)  + ' error(s) and ' + Compiler.Logger.getCount(Compiler.Logger.WARNING, Compiler.Logger.LEXER) + ' warning(s)', Compiler.Logger.INFO, Compiler.Logger.LEXER);
 
 			return tokenList;
 		},
@@ -383,7 +394,11 @@
 					break;
 			}
 
-			return errorMessage.replace("{line}", codeFragment.get('line')).replace("{code}", codeFragment.get('code'));
+			errorMessage = errorMessage.replace("{line}", codeFragment.get('line')).replace("{code}", codeFragment.get('code'));
+
+			Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.LEXER);
+
+			return errorMessage;
 		}
 
 	}, {
