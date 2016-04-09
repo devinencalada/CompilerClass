@@ -67,21 +67,22 @@
 			}
 		}
 
-	}, {
-		/**
-		 * Log message types
-		 */
-		ERROR: 1,
-		INFO: 2,
-		WARNING: 3,
-
-		/**
-		 * Log message categories
-		 */
-		LEXER: 1,
-		PARSER: 2
 	});
 
-	Compiler.Logger = Logger;
+	Compiler.Logger = new Logger();
+
+	/**
+	 * Log message types
+	 */
+	Compiler.Logger.ERROR = 1;
+	Compiler.Logger.INFO = 2;
+	Compiler.Logger.WARNING = 3;
+
+	/**
+	 * Log message categories
+	 */
+	Compiler.Logger.LEXER = 1;
+	Compiler.Logger.PARSER = 2;
+
 
 })(Backbone, Compiler);
