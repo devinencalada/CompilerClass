@@ -24,12 +24,14 @@
 		 * @param {String} message - Log message
 		 * @param {Int} type - Log message type
 		 * @param {Int} category - Log message category
+		 * @param {Bool} verbose - Set to true or false
 		 */
-		log: function(message, type, category) {
+		log: function(message, type, category, verbose) {
 			this.logs.add({
 				message: message,
 				type: type,
-				category: category
+				category: category,
+				verbose: verbose ? true : false
 			});
 		},
 
