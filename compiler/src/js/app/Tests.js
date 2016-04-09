@@ -12,15 +12,24 @@ function printLog() {
 	// Get the logs
 	var verbose = $('input[type="checkbox"]').prop('checked');
 
-	var logs = new Backbone.Collection(Compiler.Logger.logs.where({
-		verbose: verbose ? 1 : 0
-	}));
+	var logs;
 
-	// Reset the logs
-	Compiler.Logger.logs.reset();
+	if(verbose)
+	{
+		logs = Compiler.Logger.logs;
+	}
+	else
+	{
+		logs = new Backbone.Collection(Compiler.Logger.logs.where({
+			verbose: 0
+		}));
+	}
 
 	var logTemplate = _.template($('#log-template').text());
 	$("#output").append(logTemplate({logs: logs.toJSON()}));
+
+	// Reset the logs
+	Compiler.Logger.logs.reset();
 }
 
 function runProgram(sourceCode) {
