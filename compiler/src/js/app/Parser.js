@@ -45,7 +45,7 @@
 		 */
 		consumeToken: function() {
 			var currentToken = this.getCurrentToken();
-			Compiler.Logger.log(currentToken.get('name') + ' consumed!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log(currentToken.get('name') + ' consumed!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			this._getNextToken();
 		},
@@ -73,7 +73,7 @@
 		_parseBlock: function() {
 
 			// Verify the current token is a "{"
-			Compiler.Logger.log('T_LBRACE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_LBRACE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if (currentToken.get('type') !== Compiler.Token.T_LBRACE)
@@ -88,7 +88,7 @@
 			this._parseStatementList();
 
 			// Verify the current token is a "}"
-			Compiler.Logger.log('T_RBRACE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_RBRACE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			currentToken = this.getCurrentToken();
 			if (currentToken.get('type') !== Compiler.Token.T_RBRACE)
@@ -182,7 +182,7 @@
 		_parsePrintStatement: function() {
 
 			// Verify the current token is of type "T_PRINT"
-			Compiler.Logger.log('T_PRINT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_PRINT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_PRINT)
@@ -194,7 +194,7 @@
 			this.consumeToken();
 
 			// Verify the current token is a "("
-			Compiler.Logger.log('T_LPAREN expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_LPAREN expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_LPAREN)
@@ -209,7 +209,7 @@
 			this._parseExpression();
 
 			// Verify the current token is a ")"
-			Compiler.Logger.log('T_RPAREN expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_RPAREN expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_RPAREN)
@@ -232,7 +232,7 @@
 			this._parseId();
 
 			// Verify the current token is a "="
-			Compiler.Logger.log('T_SINGLE_EQUALS expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_SINGLE_EQUALS expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_SINGLE_EQUALS)
@@ -263,7 +263,7 @@
 		 * @private
 		 */
 		_parseWhileStatement: function() {
-			Compiler.Logger.log('T_WHILE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_WHILE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_WHILE)
@@ -283,7 +283,7 @@
 		 */
 		_parseIfStatement: function() {
 
-			Compiler.Logger.log('T_IF expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_IF expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_IF)
@@ -343,7 +343,7 @@
 		 */
 		_parseIntExpression: function() {
 
-			Compiler.Logger.log('T_DIGIT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_DIGIT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_DIGIT)
@@ -368,7 +368,7 @@
 		 */
 		_parseStringExpression: function() {
 			// Verify the current token is a quote
-			Compiler.Logger.log('T_QUOTE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_QUOTE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_QUOTE)
@@ -383,7 +383,7 @@
 			this._parseCharList();
 
 			// Verify the current token is a quote
-			Compiler.Logger.log('T_QUOTE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_QUOTE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_QUOTE)
@@ -403,7 +403,7 @@
 		 */
 		_parseBooleanExpression: function() {
 
-			Compiler.Logger.log('T_LPAREN, T_TRUE or T_FALSE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_LPAREN, T_TRUE or T_FALSE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 
@@ -468,7 +468,7 @@
 		_parseId: function() {
 
 			// Verify the current token is of type T_ID
-			Compiler.Logger.log('T_ID expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_ID expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_ID)
@@ -490,7 +490,7 @@
 		_parseCharList: function() {
 
 			// Verify the current token is a character or white space
-			Compiler.Logger.log('T_ID expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_ID expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if (currentToken.get('type') === Compiler.Token.T_CHAR
@@ -508,7 +508,7 @@
 		 */
 		_parseIntOperator: function() {
 			// Verify the current token a "+"
-			Compiler.Logger.log('T_PLUS expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_PLUS expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
 			if(currentToken.get('type') !== Compiler.Token.T_PLUS)
@@ -547,7 +547,7 @@
 		 */
 		_parseEOF: function () {
 
-			Compiler.Logger.log('T_EOF expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+			Compiler.Logger.log('T_EOF expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var token = this.getCurrentToken();
 			if (token.get('type') === Compiler.Token.T_EOF)
