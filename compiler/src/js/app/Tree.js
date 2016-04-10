@@ -9,7 +9,11 @@
 		/**
 		 * @property {Object} cur - Note the EMPTY current node of the tree we're building.
 		 */
-		cur: {},
+		cur: null,
+
+		initialize: function() {
+			this.cur = {};
+		},
 
 		/**
 		 * Add a node: kind in {branch, leaf}.
@@ -18,8 +22,6 @@
 		 * @param {String} kind
 		 */
 		addNode: function(name, kind) {
-
-			console.log(name);
 
 			// Construct the node object.
 			var node = {
@@ -112,43 +114,12 @@
 			// Return the result.
 			return traversalResult;
 		}
-
 	}, {
 		/**
-		 * CST Node constants
+		 * Note type constants
 		 */
 		BRANCH_NODE: 'branch',
-		LEAF_NODE: 'leaf',
-		PROGRAM_CST_NODE: 'Program',
-		BLOCK_CST_NODE: 'Block',
-		STATEMENT_LIST_CST_NODE: 'Statement List',
-		STATEMENT_CST_NODE: 'Statement',
-		PRINT_STATEMENT_CST_NODE: 'Print Statement',
-		ASSIGNMENT_STATEMENT_CST_NODE: 'Assignment Statement',
-		VAR_DECLARATION_CST_NODE: 'Variable Declaration',
-		WHILE_STATEMENT_CST_NODE: 'While Statement',
-		IF_STATEMENT_CST_NODE: 'If Statement',
-		EXPRESSION_CST_NODE: 'Expression',
-		INT_EXPRESSION_CST_NODE: 'Int Expression',
-		STRING_EXPRESSION_CST_NODE: 'String Expression',
-		BOOLEAN_EXPRESSION_CST_NODE: 'Boolean Expression',
-		CHAR_LIST_CST_NODE: 'Char List',
-
-		/**
-		 * AST Node constants
-		 */
-		BLOCK_AST_NODE: 'BLOCK',
-		VAR_DECLARATION_AST_NODE: 'Variable Declaration',
-		ASSIGNMENT_STATEMENT_AST_NODE: 'Assignment Statement',
-		PRINT_STATEMENT_AST_NODE: 'Print Statement',
-		STRING_EXPRESSION_AST_NODE: 'String Expression',
-		IF_STATEMENT_AST_NODE: 'If Statement',
-		WHILE_STATEMENT_AST_NODE: 'While Statement',
-		ADD_AST_NODE: 'Add',
-		DIGIT_AST_NODE: 'Digit',
-		EQUAL_AST_NODE: 'Equal',
-		NOT_EQUAL_AST_NODE: 'Not Equal',
-		BOOLEAN_EXPRESSION_AST_NODE: 'Boolean Expression'
+		LEAF_NODE: 'leaf'
 	});
 
 	Compiler.Tree = Tree;
