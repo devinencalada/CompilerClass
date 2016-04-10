@@ -22,14 +22,14 @@
 		lexer: null,
 
 		/**
-		 * @property {Compiler.Tree} cst - CST Tree
+		 * @property {Compiler.ConcreteSyntaxTree} cst - CST Tree
 		 */
 		cst: null,
 
 		parse: function(sourceCode) {
 			// Initialize properties
 			this.lexer = new Compiler.Lexer();
-			this.cst = new Compiler.Tree();
+			this.cst = new Compiler.ConcreteSyntaxTree();
 			this.currentTokenIndex = 0;
 
 			try
@@ -73,7 +73,7 @@
 			Compiler.Logger.log(currentToken.get('name') + ' consumed!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			// Add Leaf Node to the CST
-			this.cst.addNode(currentToken.get('code'), Compiler.Tree.LEAF_NODE);
+			this.cst.addNode(currentToken.get('code'), Compiler.ConcreteSyntaxTree.LEAF_NODE);
 
 			this._getNextToken();
 		},
@@ -87,7 +87,7 @@
 
 			Compiler.Logger.log('Performing Parsing', Compiler.Logger.INFO, Compiler.Logger.PARSER);
 
-			this.cst.addNode(Compiler.Tree.PROGRAM_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.PROGRAM_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			this._parseBlock();
 			this._parseEOF();
@@ -103,7 +103,7 @@
 		_parseBlock: function() {
 
 			// Add the "<Block>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.BLOCK_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.BLOCK_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			// Verify the current token is a "{"
 			Compiler.Logger.log('T_LBRACE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
@@ -143,7 +143,7 @@
 		 */
 		_parseStatementList: function() {
 			// Add the "<Statement List>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.STATEMENT_LIST_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.STATEMENT_LIST_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			var currentToken = this.getCurrentToken();
 
@@ -181,7 +181,7 @@
 		 */
 		_parseStatement: function() {
 			// Add the "<Statement>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.STATEMENT_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			var currentToken = this.getCurrentToken();
 
@@ -229,7 +229,7 @@
 		 */
 		_parsePrintStatement: function() {
 			// Add the "<Print Statement>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.PRINT_STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.PRINT_STATEMENT_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			// Verify the current token is of type "T_PRINT"
 			Compiler.Logger.log('T_PRINT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
@@ -281,7 +281,7 @@
 		 */
 		_parseAssignmentStatement: function() {
 			// Add the "<Assignment Statement>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.ASSIGNMENT_STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.ASSIGNMENT_STATEMENT_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			// Parse token of type T_ID
 			this._parseId();
@@ -312,7 +312,7 @@
 		 */
 		_parseVariableDeclaration: function() {
 			// Add the "<Variable Declaration>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.VAR_DECLARATION_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.VAR_DECLARATION_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			this._parseType();
 			this._parseId();
@@ -328,7 +328,7 @@
 		 */
 		_parseWhileStatement: function() {
 			// Add the "<While Statement>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.WHILE_STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.WHILE_STATEMENT_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			Compiler.Logger.log('T_WHILE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -355,7 +355,7 @@
 		_parseIfStatement: function() {
 
 			// Add the "<If Statement>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.IF_STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.IF_STATEMENT_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			Compiler.Logger.log('T_IF expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -384,7 +384,7 @@
 		 */
 		_parseExpression: function() {
 			// Add the "<Expression>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.EXPRESSION_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.EXPRESSION_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			var currentToken = this.getCurrentToken();
 
@@ -425,7 +425,7 @@
 		 */
 		_parseIntExpression: function() {
 			// Add the "<Int Expression>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.INT_EXPRESSION_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.INT_EXPRESSION_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			Compiler.Logger.log('T_DIGIT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -455,7 +455,7 @@
 		 */
 		_parseStringExpression: function() {
 			// Add the "<String Expression>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.STRING_EXPRESSION_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.STRING_EXPRESSION_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			// Verify the current token is a quote
 			Compiler.Logger.log('T_QUOTE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
@@ -496,7 +496,7 @@
 		 */
 		_parseBooleanExpression: function() {
 			// Add the "<Boolean Expression>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.BOOLEAN_EXPRESSION_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.BOOLEAN_EXPRESSION_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			Compiler.Logger.log('T_LPAREN, T_TRUE or T_FALSE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -588,7 +588,7 @@
 		 */
 		_parseCharList: function() {
 			// Add the "<Char List>" node to the CST tree
-			this.cst.addNode(Compiler.Tree.CHAR_LIST_CST_NODE, Compiler.Tree.BRANCH_NODE);
+			this.cst.addNode(Compiler.ConcreteSyntaxTree.CHAR_LIST_NODE, Compiler.ConcreteSyntaxTree.BRANCH_NODE);
 
 			// Verify the current token is a character or white space
 			Compiler.Logger.log('T_ID expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
