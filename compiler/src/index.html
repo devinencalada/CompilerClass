@@ -73,12 +73,13 @@
         <script src="js/vendor/backbone-min.js"></script>
         <script src="js/app/Compiler.js"></script>
         <script src="js/app/EventDispatcher.js"></script>
+        <script src="js/app/models/CodeFragment.js"></script>
+        <script src="js/app/models/Token.js"></script>
+        <script src="js/app/models/TreeNode.js"></script>
         <script src="js/app/Logger.js"></script>
         <script src="js/app/Tree.js"></script>
         <script src="js/app/ConcreteSyntaxTree.js"></script>
         <script src="js/app/AbstractSyntaxTree.js"></script>
-        <script src="js/app/models/CodeFragment.js"></script>
-        <script src="js/app/models/Token.js"></script>
         <script src="js/app/Lexer.js"></script>
         <script src="js/app/Parser.js"></script>
         <script src="js/app/Tests.js"></script>
@@ -93,7 +94,7 @@
         <script type="text/template" id="token-list-template">
             <div>
                 <% if(typeof tokens != 'undefined' && tokens.length > 0) { %>
-                    <h4>Tokens</h4>
+                    <h3>Tokens</h3>
 
                     <pre>
 <% _.each(tokens, function(token, key, list) { %>
@@ -107,7 +108,7 @@
 
         <script type="text/template" id="log-template">
             <div>
-                <h4>Log</h4>
+                <h3>Log</h3>
                 <pre>
 <% _.each(logs, function(log, key, list) { %>
 <%= log.message %>
