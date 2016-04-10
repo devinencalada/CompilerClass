@@ -33,6 +33,24 @@
 		initialize: function() {
 			this.children = [];
 			this.parent = {};
+		},
+
+		/**
+		 * Determine whether this is a leaf node.
+		 *
+		 * @returns {boolean}
+		 */
+		isLeaf: function() {
+			return this.kind == Compiler.TreeNode.LEAF_NODE;
+		},
+
+		/**
+		 * Determine whether this is a branch node.
+		 *
+		 * @returns {boolean}
+		 */
+		isBranch: function() {
+			return this.kind == Compiler.TreeNode.BRANCH_NODE;
 		}
 	}, {
 
