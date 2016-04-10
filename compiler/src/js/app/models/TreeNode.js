@@ -35,6 +35,13 @@
 			this.parent = {};
 		}
 	}, {
+
+		/**
+		 * Note type constants
+		 */
+		BRANCH_NODE: 'branch',
+		LEAF_NODE: 'leaf',
+
 		/**
 		 * Static method used to create TreeNode instances
 		 */
