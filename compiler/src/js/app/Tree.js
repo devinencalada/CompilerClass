@@ -16,19 +16,11 @@
 		},
 
 		/**
-		 * Add a node: kind in {branch, leaf}.
+		 * Add a node
 		 *
-		 * @param {String} name
-		 * @param {String} kind
+		 * @param {Compiler.TreeNode} node
 		 */
-		addNode: function(name, kind) {
-
-			// Construct the node object.
-			var node = {
-				name: name,
-				children: [],
-				parent: {}
-			};
+		addNode: function(node) {
 
 			// Check to see if it needs to be the root node.
 			if((this.root == null) || (!this.root))
@@ -48,7 +40,7 @@
 			}
 
 			// If we are an interior/branch node, then...
-			if (kind == Tree.BRANCH_NODE)
+			if (node.isBranch())
 			{
 				// ... update the CURrent node pointer to ourselves.
 				this.cur = node;
@@ -114,12 +106,6 @@
 			// Return the result.
 			return traversalResult;
 		}
-	}, {
-		/**
-		 * Note type constants
-		 */
-		BRANCH_NODE: 'branch',
-		LEAF_NODE: 'leaf'
 	});
 
 	Compiler.Tree = Tree;
