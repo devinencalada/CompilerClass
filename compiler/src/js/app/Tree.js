@@ -19,6 +19,8 @@
 		 */
 		addNode: function(name, kind) {
 
+			console.log(name);
+
 			// Construct the node object.
 			var node = {
 				name: name,
@@ -112,6 +114,9 @@
 		}
 
 	}, {
+		/**
+		 * CST Node constants
+		 */
 		BRANCH_NODE: 'branch',
 		LEAF_NODE: 'leaf',
 		PROGRAM_CST_NODE: 'Program',
@@ -127,7 +132,23 @@
 		INT_EXPRESSION_CST_NODE: 'Int Expression',
 		STRING_EXPRESSION_CST_NODE: 'String Expression',
 		BOOLEAN_EXPRESSION_CST_NODE: 'Boolean Expression',
-		CHAR_LIST_CST_NODE: 'Char List'
+		CHAR_LIST_CST_NODE: 'Char List',
+
+		/**
+		 * AST Node constants
+		 */
+		BLOCK_AST_NODE: 'BLOCK',
+		VAR_DECLARATION_AST_NODE: 'Variable Declaration',
+		ASSIGNMENT_STATEMENT_AST_NODE: 'Assignment Statement',
+		PRINT_STATEMENT_AST_NODE: 'Print Statement',
+		STRING_EXPRESSION_AST_NODE: 'String Expression',
+		IF_STATEMENT_AST_NODE: 'If Statement',
+		WHILE_STATEMENT_AST_NODE: 'While Statement',
+		ADD_AST_NODE: 'Add',
+		DIGIT_AST_NODE: 'Digit',
+		EQUAL_AST_NODE: 'Equal',
+		NOT_EQUAL_AST_NODE: 'Not Equal',
+		BOOLEAN_EXPRESSION_AST_NODE: 'Boolean Expression'
 	});
 
 	Compiler.Tree = Tree;
