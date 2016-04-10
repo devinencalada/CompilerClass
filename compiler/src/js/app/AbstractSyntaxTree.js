@@ -22,7 +22,7 @@
 		/**
 		 * Determines whether the specified node type belongs in the AST.
 		 *
-		 * @param {Object} node
+		 * @param {String} node
 		 * @returns {boolean}
 		 */
 		isInvalidNode: function (node) {
@@ -39,23 +39,9 @@
 			return matched;
 		},
 
-		/**
-		 * Creates an AST using the specified CST.
-		 *
-		 * @param {Compiler.ConcreteSyntaxTree} cst
-		 *
-		 * @returns {Compiler.AbstractSyntaxTree}
-		 */
 		makeAST: function(cst) {
 			var ast = new Compiler.AbstractSyntaxTree();
 
-			/**
-			 * Checks desiredValue exists within the specified node.
-			 *
-			 * @param {Object} node
-			 * @param {String} desiredValue
-			 * @returns {boolean}
-			 */
 			function contains(node, desiredValue)
 			{
 				if (node !== null)
@@ -80,47 +66,41 @@
 				}
 			}
 
-			/**
-			 * Traverses the CST to build the AST
-			 *
-			 * @param {Object} node
-			 * @param {String} interiorNodePath
-			 */
 			function traverse(node, interiorNodePath)
 			{
-				var endChildren = true;
+				var wentDownALevel = true;
 
 				switch (node.name)
 				{
 					case Compiler.ConcreteSyntaxTree.BLOCK_NODE:
-						ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.BLOCK_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+						ast.addNode(Compiler.AbstractSyntaxTree.BLOCK_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 						break;
 					case Compiler.ConcreteSyntaxTree.VAR_DECLARATION_NODE:
 						interiorNodePath = Compiler.AbstractSyntaxTree.VAR_DECLARATION_NODE;
-						ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.VAR_DECLARATION_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+						ast.addNode(Compiler.AbstractSyntaxTree.VAR_DECLARATION_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 						break;
 					case Compiler.ConcreteSyntaxTree.ASSIGNMENT_STATEMENT_NODE:
 						interiorNodePath = Compiler.AbstractSyntaxTree.ASSIGNMENT_STATEMENT_NODE;
-						ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.ASSIGNMENT_STATEMENT_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+						ast.addNode(Compiler.AbstractSyntaxTree.ASSIGNMENT_STATEMENT_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 						break;
 					case Compiler.ConcreteSyntaxTree.PRINT_STATEMENT_NODE:
 						interiorNodePath = Compiler.AbstractSyntaxTree.PRINT_STATEMENT_NODE;
-						ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.PRINT_STATEMENT_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+						ast.addNode(Compiler.AbstractSyntaxTree.PRINT_STATEMENT_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 						break;
 					case Compiler.ConcreteSyntaxTree.IF_STATEMENT_NODE:
 						interiorNodePath = Compiler.AbstractSyntaxTree.IF_STATEMENT_NODE;
-						ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.IF_STATEMENT_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+						ast.addNode(Compiler.AbstractSyntaxTree.IF_STATEMENT_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 						break;
 					case Compiler.ConcreteSyntaxTree.WHILE_STATEMENT_NODE:
 						interiorNodePath = Compiler.AbstractSyntaxTree.WHILE_STATEMENT_NODE;
-						ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.WHILE_STATEMENT_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+						ast.addNode(Compiler.AbstractSyntaxTree.WHILE_STATEMENT_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 						break;
 					case Compiler.ConcreteSyntaxTree.INT_EXPRESSION_NODE:
 						// Add plus subtree
 						if(contains(node, '+'))
 						{
 							interiorNodePath = Compiler.AbstractSyntaxTree.ADD_NODE;
-							ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.ADD_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+							ast.addNode(Compiler.AbstractSyntaxTree.ADD_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 						}
 						else
 						{
@@ -130,6 +110,7 @@
 						break;
 					case Compiler.ConcreteSyntaxTree.STRING_EXPRESSION_NODE:
 						interiorNodePath = Compiler.AbstractSyntaxTree.STRING_EXPRESSION_NODE;
+						//ast.addNode(Compiler.AbstractSyntaxTree.STRING_EXPRESSION_NODE, Compiler.AbstractSyntaxTree.LEAF_NODE);
 						break;
 
 					case Compiler.ConcreteSyntaxTree.CHAR_LIST_NODE:
@@ -139,13 +120,7 @@
 							charList += node.children[i].name;
 						}
 
-						var token = Compiler.Token.getTokenByType(Compiler.Token.T_STRING_EXPRESSION);
-						token.set({
-							code: charList,
-							line: node.children[0].token.get('line')
-						});
-
-						ast.addNode(Compiler.TreeNode.createNode(charList, token, Compiler.AbstractSyntaxTree.LEAF_NODE));
+						ast.addNode(charList, Compiler.AbstractSyntaxTree.LEAF_NODE);
 						break;
 
 					case Compiler.ConcreteSyntaxTree.BOOLEAN_EXPRESSION_NODE:
@@ -155,17 +130,17 @@
 						{
 							var currentNode = node.children[i];
 
-							if (currentNode.name === '==')
+							if (currentNode.name === "==")
 							{
 								interiorNodePath = Compiler.AbstractSyntaxTree.EQUAL_NODE;
-								ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.EQUAL_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+								ast.addNode(Compiler.AbstractSyntaxTree.EQUAL_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 
 								comparisonOpFound = true;
 							}
-							else if (currentNode.name === '!=')
+							else if (currentNode.name === "!=")
 							{
 								interiorNodePath = Compiler.AbstractSyntaxTree.NOT_EQUAL_NODE;
-								ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.NOT_EQUAL_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
+								ast.addNode(Compiler.AbstractSyntaxTree.NOT_EQUAL_NODE, Compiler.AbstractSyntaxTree.BRANCH_NODE);
 
 								comparisonOpFound = true;
 							}
@@ -183,7 +158,7 @@
 						break;
 
 					default:
-						endChildren = false;
+						wentDownALevel = false;
 						break;
 				}
 
@@ -200,7 +175,7 @@
 					case Compiler.AbstractSyntaxTree.NOT_EQUAL_NODE:
 						if (node.children.length == 0 && !Compiler.AbstractSyntaxTree.isInvalidNode(node.name))
 						{
-							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.AbstractSyntaxTree.LEAF_NODE));
+							ast.addNode(node.name, Compiler.AbstractSyntaxTree.LEAF_NODE);
 						}
 
 						break;
@@ -208,20 +183,20 @@
 					case Compiler.AbstractSyntaxTree.DIGIT_NODE:
 						if (node.children.length == 0 && !Compiler.AbstractSyntaxTree.isInvalidNode(node.name))
 						{
-							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.AbstractSyntaxTree.LEAF_NODE));
+							ast.addNode(node.name, Compiler.AbstractSyntaxTree.LEAF_NODE);
 						}
 
-						endChildren = false;
+						wentDownALevel = false;
 
 						break;
 
 					case Compiler.AbstractSyntaxTree.BOOLEAN_EXPRESSION_NODE:
 						if (node.children.length == 0 && !Compiler.AbstractSyntaxTree.isInvalidNode(node.name))
 						{
-							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.AbstractSyntaxTree.LEAF_NODE));
+							ast.addNode(node.name, Compiler.AbstractSyntaxTree.LEAF_NODE);
 						}
 
-						endChildren = false;
+						wentDownALevel = false;
 
 						break;
 
@@ -234,7 +209,7 @@
 					traverse(node.children[i], interiorNodePath);
 				}
 
-				if (endChildren)
+				if (wentDownALevel)
 				{
 					ast.endChildren();
 				}
