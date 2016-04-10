@@ -65,9 +65,19 @@
 		 */
 		createNode: function(name, token, kind) {
 			var treeNode = new TreeNode();
-			treeNode.name = name;
-			treeNode.token = token;
-			treeNode.kind = kind;
+
+			if(arguments.length == 2)
+			{
+				treeNode.name = name;
+				treeNode.token = null;
+				treeNode.kind = token;
+			}
+			else
+			{
+				treeNode.name = name;
+				treeNode.token = token;
+				treeNode.kind = kind;
+			}
 
 			return treeNode;
 		}
