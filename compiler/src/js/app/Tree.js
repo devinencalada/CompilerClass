@@ -113,7 +113,21 @@
 
 	}, {
 		BRANCH_NODE: 'branch',
-		LEAF_NODE: 'leaf'
+		LEAF_NODE: 'leaf',
+		PROGRAM_CST_NODE: 'Program',
+		BLOCK_CST_NODE: 'Block',
+		STATEMENT_LIST_CST_NODE: 'Statement List',
+		STATEMENT_CST_NODE: 'Statement',
+		PRINT_STATEMENT_CST_NODE: 'Print Statement',
+		ASSIGNMENT_STATEMENT_CST_NODE: 'Assignment Statement',
+		VAR_DECLARATION_CST_NODE: 'Variable Declaration',
+		WHILE_STATEMENT_CST_NODE: 'While Statement',
+		IF_STATEMENT_CST_NODE: 'If Statement',
+		EXPRESSION_CST_NODE: 'Expression',
+		INT_EXPRESSION_CST_NODE: 'Int Expression',
+		STRING_EXPRESSION_CST_NODE: 'String Expression',
+		BOOLEAN_EXPRESSION_CST_NODE: 'Boolean Expression',
+		CHAR_LIST_CST_NODE: 'Char List'
 	});
 
 	Compiler.Tree = Tree;
