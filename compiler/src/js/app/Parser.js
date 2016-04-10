@@ -16,6 +16,15 @@
 		 */
 		currentTokenIndex: 0,
 
+		/**
+		 * @property {Compiler.Tree} cst - CST Tree
+		 */
+		cst: null,
+
+		initialize: function() {
+			this.cst = new Compiler.Tree();
+		},
+
 		parse: function() {
 			this._parseProgram();
 		},
@@ -47,6 +56,9 @@
 			var currentToken = this.getCurrentToken();
 			Compiler.Logger.log(currentToken.get('name') + ' consumed!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
+			// Add Leaf Node to the CST
+			this.cst.addNode(currentToken.get('code'), Compiler.Tree.LEAF_NODE);
+
 			this._getNextToken();
 		},
 
@@ -58,6 +70,8 @@
 		_parseProgram: function () {
 
 			Compiler.Logger.log('Performing Parsing', Compiler.Logger.INFO, Compiler.Logger.PARSER);
+
+			this.cst.addNode(Compiler.Tree.PROGRAM_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			this._parseBlock();
 			this._parseEOF();
@@ -71,6 +85,9 @@
 		 * @private
 		 */
 		_parseBlock: function() {
+
+			// Add the "<Block>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.BLOCK_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			// Verify the current token is a "{"
 			Compiler.Logger.log('T_LBRACE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
@@ -98,6 +115,9 @@
 
 			// Token is a "}"
 			this.consumeToken();
+
+			// Close the "<Block>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -106,6 +126,9 @@
 		 * @private
 		 */
 		_parseStatementList: function() {
+			// Add the "<Statement List>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.STATEMENT_LIST_CST_NODE, Compiler.Tree.BRANCH_NODE);
+
 			var currentToken = this.getCurrentToken();
 
 			switch(currentToken.get('type'))
@@ -125,6 +148,9 @@
 				default:
 					break;
 			}
+
+			// Close the "<Statement List>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -138,6 +164,9 @@
 		 * @private
 		 */
 		_parseStatement: function() {
+			// Add the "<Statement>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
+
 			var currentToken = this.getCurrentToken();
 
 			switch (currentToken.get('type'))
@@ -172,6 +201,9 @@
 					this._throwException(currentToken, '{name} is not the beginning of an statement.');
 					break;
 			}
+
+			// Close the "<Statement>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -180,6 +212,8 @@
 		 * @private
 		 */
 		_parsePrintStatement: function() {
+			// Add the "<Print Statement>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.PRINT_STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			// Verify the current token is of type "T_PRINT"
 			Compiler.Logger.log('T_PRINT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
@@ -219,6 +253,9 @@
 
 			// Token is a ")"
 			this.consumeToken();
+
+			// Close the "<Print Statement>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -227,6 +264,8 @@
 		 * @private
 		 */
 		_parseAssignmentStatement: function() {
+			// Add the "<Assignment Statement>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.ASSIGNMENT_STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			// Parse token of type T_ID
 			this._parseId();
@@ -245,6 +284,9 @@
 
 			// Parse the expression
 			this._parseExpression();
+
+			// Close the "<Assignment Statement>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -253,8 +295,14 @@
 		 * @private
 		 */
 		_parseVariableDeclaration: function() {
+			// Add the "<Variable Declaration>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.VAR_DECLARATION_CST_NODE, Compiler.Tree.BRANCH_NODE);
+
 			this._parseType();
 			this._parseId();
+
+			// Close the "<Variable Statement>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -263,6 +311,9 @@
 		 * @private
 		 */
 		_parseWhileStatement: function() {
+			// Add the "<While Statement>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.WHILE_STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
+
 			Compiler.Logger.log('T_WHILE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
@@ -272,8 +323,12 @@
 			}
 
 			this.consumeToken();
+
 			this._parseBooleanExpression();
 			this._parseBlock();
+
+			// Close the "<While Statement>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -282,6 +337,9 @@
 		 * @private
 		 */
 		_parseIfStatement: function() {
+
+			// Add the "<If Statement>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.IF_STATEMENT_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			Compiler.Logger.log('T_IF expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -295,6 +353,9 @@
 
 			this._parseBooleanExpression();
 			this._parseBlock();
+
+			// Close the "<If Statement>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -306,6 +367,8 @@
 		 * @private
 		 */
 		_parseExpression: function() {
+			// Add the "<Expression>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.EXPRESSION_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			var currentToken = this.getCurrentToken();
 
@@ -333,6 +396,9 @@
 					this._throwException(currentToken, 'Found {name} but expected an expression.');
 					break;
 			}
+
+			// Close the "<Expression>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -342,6 +408,8 @@
 		 * @private
 		 */
 		_parseIntExpression: function() {
+			// Add the "<Int Expression>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.INT_EXPRESSION_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			Compiler.Logger.log('T_DIGIT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -359,6 +427,9 @@
 				this._parseIntOperator();
 				this._parseExpression();
 			}
+
+			// Close the "<Int Expression>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -367,6 +438,9 @@
 		 * @private
 		 */
 		_parseStringExpression: function() {
+			// Add the "<String Expression>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.STRING_EXPRESSION_CST_NODE, Compiler.Tree.BRANCH_NODE);
+
 			// Verify the current token is a quote
 			Compiler.Logger.log('T_QUOTE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -393,6 +467,9 @@
 
 			// The current token is a quote
 			this.consumeToken();
+
+			// Close the "<String Expression>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -402,6 +479,8 @@
 		 * @private
 		 */
 		_parseBooleanExpression: function() {
+			// Add the "<Boolean Expression>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.BOOLEAN_EXPRESSION_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			Compiler.Logger.log('T_LPAREN, T_TRUE or T_FALSE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -427,7 +506,8 @@
 				// The current token is a ")"
 				this.consumeToken();
 			}
-			else if(currentToken.get('type') === Compiler.Token.T_TRUE || currentToken.get('type') === Compiler.Token.T_FALSE)
+			else if(currentToken.get('type') === Compiler.Token.T_TRUE
+				|| currentToken.get('type') === Compiler.Token.T_FALSE)
 			{
 				this.consumeToken();
 			}
@@ -435,6 +515,9 @@
 			{
 				this._throwException(currentToken, '{name} is not the beginning of a boolean expression.');
 			}
+
+			// Close the "<Boolean Expression>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -488,6 +571,8 @@
 		 * @private
 		 */
 		_parseCharList: function() {
+			// Add the "<Char List>" node to the CST tree
+			this.cst.addNode(Compiler.Tree.CHAR_LIST_CST_NODE, Compiler.Tree.BRANCH_NODE);
 
 			// Verify the current token is a character or white space
 			Compiler.Logger.log('T_ID expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
@@ -499,6 +584,9 @@
 				this.consumeToken();
 				this._parseCharList();
 			}
+
+			// Close the "<Char List>" node in the CST tree
+			this.cst.endChildren();
 		},
 
 		/**
@@ -574,7 +662,11 @@
 			}
 
 			var errorMessage = "Error on line {line}: " + message;
-			throw errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
+			errorMessage = errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
+
+			Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.PARSER);
+
+			throw errorMessage;
 		},
 
 		/**
@@ -600,7 +692,10 @@
 					break;
 			}
 
-			throw errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
+			var errorMessage = errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
+			Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.PARSER);
+
+			throw errorMessage;
 		},
 
 		/**
