@@ -1,119 +1,129 @@
 <!doctype html>
 <html class="no-js" lang="">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- Place favicon.ico in the root directory -->
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/main.css">
-    <script src="js/vendor/modernizr-2.8.3.min.js"></script>
-</head>
-<body>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body>
 
-<div class="container">
-    <!--[if lt IE 8]>
-    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+        <div class="container">
+            <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+            <![endif]-->
 
-    <div class="page-header">
-        <h1>Lexer and Parser testing <small>Devin Encalada</small></h1>
-    </div>
+            <div class="page-header">
+                <h1>Lexer and Parser testing <small>Devin Encalada</small></h1>
+            </div>
 
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-5">
-            <h2>Source Code</h2>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-5">
+                    <h2>Source Code</h2>
 
-            <form style="margin-top: 20px">
-                <div class="form-group">
-                    <label>Select an example</label>
-                    <select class="form-control">
-                        <option value="">Select one</option>
-                        <option value="0">Addition</option>
-                        <option value="1">String</option>
-                        <option value="2">If 1</option>
-                        <option value="3">If 2</option>
-                        <option value="4">If 3</option>
-                        <option value="5">While</option>
-                        <option value="6">Boolean</option>
-                        <option value="7">Run all</option>
-                    </select>
+                    <form style="margin-top: 20px">
+                        <div class="form-group">
+                            <label>Select an example</label>
+                            <select class="form-control">
+                                <option value="">Select one</option>
+                                <option value="0">Addition</option>
+                                <option value="1">String</option>
+                                <option value="2">If 1</option>
+                                <option value="3">If 2</option>
+                                <option value="4">If 3</option>
+                                <option value="5">While</option>
+                                <option value="6">Boolean</option>
+                                <option value="7">Run all</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Enter code</label>
+                            <textarea class="form-control" rows="10"></textarea>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"> Verbose
+                            </label>
+                        </div>
+
+                        <button>Submit</button>
+
+                    </form>
                 </div>
-
-                <div class="form-group">
-                    <label>Enter code</label>
-                    <textarea class="form-control" rows="10"></textarea>
+                <div class="col-xs-12 col-sm-12 col-md-7" style="border-left: 1px solid #ccc; min-height: 500px">
+                    <h2>Output</h2>
+                    <div id="output"></div>
                 </div>
-
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox"> Verbose
-                    </label>
-                </div>
-
-                <button>Submit</button>
-
-            </form>
+            </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-7" style="border-left: 1px solid #ccc; min-height: 500px">
-            <h2>Output</h2>
-            <div id="output"></div>
-        </div>
-    </div>
-</div>
 
-<script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
-<script src="js/vendor/underscore-min.js"></script>
-<script src="js/vendor/backbone-min.js"></script>
-<script src="js/app/Compiler.js"></script>
-<script src="js/app/EventDispatcher.js"></script>
-<script src="js/app/Logger.js"></script>
-<script src="js/app/models/CodeFragment.js"></script>
-<script src="js/app/models/Token.js"></script>
-<script src="js/app/Lexer.js"></script>
-<script src="js/app/Parser.js"></script>
-<script src="js/app/Tests.js"></script>
+        <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+        <script src="js/vendor/underscore-min.js"></script>
+        <script src="js/vendor/backbone-min.js"></script>
+        <script src="js/app/Compiler.js"></script>
+        <script src="js/app/EventDispatcher.js"></script>
+        <script src="js/app/Logger.js"></script>
+        <script src="js/app/Tree.js"></script>
+        <script src="js/app/ConcreteSyntaxTree.js"></script>
+        <script src="js/app/AbstractSyntaxTree.js"></script>
+        <script src="js/app/models/CodeFragment.js"></script>
+        <script src="js/app/models/Token.js"></script>
+        <script src="js/app/Lexer.js"></script>
+        <script src="js/app/Parser.js"></script>
+        <script src="js/app/Tests.js"></script>
 
-<script type="text/template" id="source-code-template">
-    <div>
-        <h3>Source code</h3>
-        <pre><%= source_code %></pre>
-    </div>
-</script>
+        <script type="text/template" id="source-code-template">
+            <div>
+                <h3>Source code</h3>
+                <pre><%= source_code %></pre>
+            </div>
+        </script>
 
-<script type="text/template" id="token-list-template">
-    <div>
-        <% if(typeof tokens != 'undefined' && tokens.length > 0) { %>
-        <h4>Tokens</h4>
+        <script type="text/template" id="token-list-template">
+            <div>
+                <% if(typeof tokens != 'undefined' && tokens.length > 0) { %>
+                    <h4>Tokens</h4>
 
-        <pre>
+                    <pre>
 <% _.each(tokens, function(token, key, list) { %>
 <%= "Line " + token.line + ": " + token.name + " [ " + token.code + " ]" %>
 <% }) %>
-        </pre>
+                    </pre>
 
-        <% } %>
-    </div>
-</script>
+                <% } %>
+            </div>
+        </script>
 
-<script type="text/template" id="log-template">
-    <div>
-        <h4>Log</h4>
-        <pre>
+        <script type="text/template" id="log-template">
+            <div>
+                <h4>Log</h4>
+                <pre>
 <% _.each(logs, function(log, key, list) { %>
 <%= log.message %>
 <% }) %>
-        </pre>
-    </div>
+                </pre>
+            </div>
 
-    <hr>
-</script>
+            <hr>
+        </script>
 
-</body>
+        <script type="text/template" id="tree-template">
+            <div>
+                <h3><%= name %></h3>
+                <pre><%= tree %></pre>
+            </div>
+        </script>
+
+    </body>
 </html>

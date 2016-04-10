@@ -8,6 +8,14 @@ function printTokenList(tokens) {
 	$("#output").append(tokenListTemplate({tokens: tokens.toJSON()}));
 }
 
+function printTree(name, tree) {
+	var treeTemplate = _.template($('#tree-template').text());
+	$("#output").append(treeTemplate({
+		name: name,
+		tree: tree
+	}));
+}
+
 function printLog() {
 	// Get the logs
 	var verbose = $('input[type="checkbox"]').prop('checked');
@@ -34,34 +42,29 @@ function printLog() {
 
 function runProgram(sourceCode) {
 
-	var lexer = new Compiler.Lexer(),
-		parser = new Compiler.Parser(),
-		tokens = null;
-
-	printCode(sourceCode);
+	var parser = new Compiler.Parser();
 
 	// Parse the code
 	try
 	{
-		tokens = lexer.tokenize(sourceCode);
-		printTokenList(tokens);
+		parser.parse(sourceCode);
 	}
 	catch(err)
 	{
-		printLog();
-		return;
+
 	}
 
-	parser.setTokens(tokens);
+	printCode(sourceCode);
 
-	try
+	if(parser.tokens)
 	{
-		parser.parse();
+		printTokenList(parser.tokens);
 	}
-	catch(err)
+
+	if(parser.cst)
 	{
-		printLog();
-		return;
+		printTree('CST', _.escape(parser.cst.toString()));
+		printTree('AST', _.escape(Compiler.AbstractSyntaxTree.makeAST(parser.cst)));
 	}
 
 	printLog();
