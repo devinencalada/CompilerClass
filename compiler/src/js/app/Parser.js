@@ -17,27 +17,35 @@
 		currentTokenIndex: 0,
 
 		/**
+		 * @property {Compiler.Lexer} lexer
+		 */
+		lexer: null,
+
+		/**
 		 * @property {Compiler.Tree} cst - CST Tree
 		 */
 		cst: null,
 
-		initialize: function() {
+		parse: function(sourceCode) {
+			// Initialize properties
+			this.lexer = new Compiler.Lexer();
 			this.cst = new Compiler.Tree();
-		},
-
-		parse: function() {
-			this._parseProgram();
-		},
-
-		/**
-		 * Sets the tokens property. Setting the tokens property
-		 * will also reset the currentTokenIndex to 0
-		 *
-		 * @param {Compiler.Token[]} tokens
-		 */
-		setTokens: function(tokens) {
 			this.currentTokenIndex = 0;
-			this.tokens = tokens;
+
+			try
+			{
+				this.tokens = this.lexer.tokenize(sourceCode);
+			}
+			catch(err)
+			{
+				this.lexer = null;
+				this.cst = null;
+				this.tokens = null;
+				this.currentTokenIndex = 0;
+				throw err;
+			}
+
+			this._parseProgram();
 		},
 
 		/**
