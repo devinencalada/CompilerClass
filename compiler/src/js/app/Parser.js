@@ -45,7 +45,15 @@
 				throw err;
 			}
 
-			this._parseProgram();
+			try
+			{
+				this._parseProgram();
+			}
+			catch(err)
+			{
+				this.cst = null;
+				throw err;
+			}
 		},
 
 		/**
