@@ -594,11 +594,10 @@
 			Compiler.Logger.log('T_ID expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
 			var currentToken = this.getCurrentToken();
-			if (currentToken.get('type') === Compiler.Token.T_CHAR
-				|| currentToken.get('type') === Compiler.Token.T_WHITE_SPACE)
+			while(currentToken.get('type') === Compiler.Token.T_CHAR || currentToken.get('type') === Compiler.Token.T_WHITE_SPACE)
 			{
 				this.consumeToken();
-				this._parseCharList();
+				currentToken = this.getCurrentToken();
 			}
 
 			// Close the "<Char List>" node in the CST tree
