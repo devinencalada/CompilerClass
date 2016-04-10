@@ -22,7 +22,7 @@
 		/**
 		 * Determines whether the specified node type belongs in the AST.
 		 *
-		 * @param {String} node
+		 * @param {Object} node
 		 * @returns {boolean}
 		 */
 		isInvalidNode: function (node) {
@@ -39,9 +39,23 @@
 			return matched;
 		},
 
+		/**
+		 * Creates an AST using the specified CST.
+		 *
+		 * @param {Compiler.ConcreteSyntaxTree} cst
+		 *
+		 * @returns {Compiler.AbstractSyntaxTree}
+		 */
 		makeAST: function(cst) {
 			var ast = new Compiler.AbstractSyntaxTree();
 
+			/**
+			 * Checks desiredValue exists within the specified node.
+			 *
+			 * @param {Object} node
+			 * @param {String} desiredValue
+			 * @returns {boolean}
+			 */
 			function contains(node, desiredValue)
 			{
 				if (node !== null)
@@ -66,9 +80,15 @@
 				}
 			}
 
+			/**
+			 * Traverses the CST to build the AST
+			 *
+			 * @param {Object} node
+			 * @param {String} interiorNodePath
+			 */
 			function traverse(node, interiorNodePath)
 			{
-				var wentDownALevel = true;
+				var endChildren = true;
 
 				switch (node.name)
 				{
@@ -110,7 +130,6 @@
 						break;
 					case Compiler.ConcreteSyntaxTree.STRING_EXPRESSION_NODE:
 						interiorNodePath = Compiler.AbstractSyntaxTree.STRING_EXPRESSION_NODE;
-						//ast.addNode(Compiler.AbstractSyntaxTree.STRING_EXPRESSION_NODE, Compiler.AbstractSyntaxTree.LEAF_NODE);
 						break;
 
 					case Compiler.ConcreteSyntaxTree.CHAR_LIST_NODE:
@@ -158,7 +177,7 @@
 						break;
 
 					default:
-						wentDownALevel = false;
+						endChildren = false;
 						break;
 				}
 
@@ -186,7 +205,7 @@
 							ast.addNode(node.name, Compiler.AbstractSyntaxTree.LEAF_NODE);
 						}
 
-						wentDownALevel = false;
+						endChildren = false;
 
 						break;
 
@@ -196,7 +215,7 @@
 							ast.addNode(node.name, Compiler.AbstractSyntaxTree.LEAF_NODE);
 						}
 
-						wentDownALevel = false;
+						endChildren = false;
 
 						break;
 
@@ -209,7 +228,7 @@
 					traverse(node.children[i], interiorNodePath);
 				}
 
-				if (wentDownALevel)
+				if (endChildren)
 				{
 					ast.endChildren();
 				}
