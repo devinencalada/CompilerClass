@@ -25,9 +25,26 @@
 		 */
 		parent: null,
 
+		/**
+		 * @property {String} kind - "Branch or Leaf"
+		 */
+		kind: null,
+
 		initialize: function() {
 			this.children = [];
 			this.parent = {};
+		}
+	}, {
+		/**
+		 * Static method used to create TreeNode instances
+		 */
+		createNode: function(name, token, kind) {
+			var treeNode = new TreeNode();
+			treeNode.name = name;
+			treeNode.token = token;
+			treeNode.kind = kind;
+
+			return treeNode;
 		}
 	});
 
