@@ -21,18 +21,18 @@
 		scopeLevel: -1,
 
 		/**
-		 * @property {Int} parentScope - Parent scope level
+		 * @property {Compiler.ScopeTable} parentScopeTable - Parent scope table
 		 */
-		parentScope: null,
+		parentScopeTable: null,
 
 		/**
-		 * @property {Array} childScopes - List of child scopes
+		 * @property {Compiler.ScopeTable[]} childScopeTables - List of child scope tables
 		 */
-		childScopes: null,
+		childScopeTables: null,
 
 		initialize: function() {
 			this.entries = Backbone.Collection();
-			this.childScopes = [];
+			this.childScopeTables = [];
 		},
 
 		/**
@@ -58,7 +58,64 @@
 			Compiler.Logger.log('Inserting id ' + symbolTableEntry.get('name') + ' from line ' + symbolTableEntry.get('line') + ' into symbol table at scope: ' + symbolTableEntry.get('scope'), Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
 
 			this.entries.add(symbolTableEntry);
+
 			return true;
+		},
+
+		/**
+		 * Checks if id is in the symbol table; if it is, it links the node
+		 * to that symbol table entry.
+		 *
+		 * @param {String} name
+		 * @param {Compiler.TreeNode} node
+		 * @param {String} optionalPath
+		 * @returns {boolean}
+		 */
+		hasEntry: function(name, node, optionalPath) {
+			var currScopeTable = this,
+				found = false;
+
+			Compiler.Logger.log('Checking if id ' + name + ' is in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
+
+			while (currScopeTable && !found)
+			{
+				var symbolTableEntry = currScopeTable.findWhere({
+					name: name
+				});
+
+				if (!symbolTableEntry)
+				{
+					currScopeTable = currScopeTable.parentScopeTable;
+				}
+				else
+				{
+					Compiler.Logger.log('The id ' + name + ' at the scope level ' + currScopeTable.scopeLevel + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
+
+					symbolTableEntry.incrementReferences();
+
+					if(optionalPath == Compiler.AbstractSyntaxTree.ASSIGNMENT_STATEMENT_NODE)
+					{
+						symbolTableEntry.set('initialized', true);
+					}
+
+					var parentNode = node.parent;
+
+					if (optionalPath != Compiler.AbstractSyntaxTree.VAR_DECLARATION_NODE
+						&& parentNode.name != Compiler.AbstractSyntaxTree.VAR_DECLARATION_NODE)
+					{
+						if (!symbolTableEntry.get('initialized'))
+						{
+							Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' on line ' + node.token('line') + ' was used before being initialized first', Compiler.Logger.WARNING, Compiler.Logger.SCOPE_TABLE);
+						}
+					}
+
+					node.setSymbolTableEntry(symbolTableEntry);
+
+					found = true;
+				}
+			}
+
+			return found;
 		}
 	});
 
