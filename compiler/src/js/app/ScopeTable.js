@@ -28,7 +28,12 @@
 		/**
 		 * @property {Array} childScopes - List of child scopes
 		 */
-		childScopes: null
+		childScopes: null,
+
+		initialize: function() {
+			this.entries = Backbone.Collection();
+			this.childScopes = [];
+		}
 	});
 
 	Compiler.ScopeTable = ScopeTable;
