@@ -5,6 +5,7 @@
 (function (Backbone, Compiler) {
 
 	var ScopeTable = Backbone.Model.extend({
+
 		/**
 		 * @property {Backbone.Collection} entries - List of symbol entries
 		 */
@@ -116,6 +117,31 @@
 			}
 
 			return found;
+		},
+
+		/**
+		 * Detects variable warnings.
+		 *
+		 * @param {Compiler.ScopeTable} scopeTable
+		 */
+		detectWarnings: function (scopeTable) {
+
+			scopeTable.entries.each(function(symbolTableEntry) {
+				if(symbolTableEntry.get('references') == 1)
+				{
+					Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' declared on line ' + symbolTableEntry.get('line') + ' was declared, but never used', Compiler.Logger.WARNING, Compiler.Logger.SCOPE_TABLE);
+				}
+
+				if(!symbolTableEntry.get('initialized'))
+				{
+					Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' declared on line ' + symbolTableEntry.get('line') + ' was never initialized', Compiler.Logger.WARNING, Compiler.Logger.SCOPE_TABLE);
+				}
+			});
+
+			for (var i = 0; i < scopeTable.childScopeTables.length; i++)
+			{
+				scopeTable.detectWarnings(scopeTable.childScopeTables[i]);
+			}
 		}
 	});
 
