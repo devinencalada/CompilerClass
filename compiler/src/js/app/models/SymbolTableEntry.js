@@ -13,6 +13,13 @@
 			line: -1,
 			scope: -1,
 			references: 0
+		},
+
+		/**
+		 * Increments the value of the number of references
+		 */
+		incrementReferences: function() {
+			this.set('references', this.attributes.references + 1);
 		}
 	});
 
