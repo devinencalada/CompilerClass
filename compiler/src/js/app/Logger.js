@@ -83,6 +83,7 @@
 	 */
 	Compiler.Logger.LEXER = 1;
 	Compiler.Logger.PARSER = 2;
+	Compiler.Logger.SCOPE_TABLE = 3;
 
 
 })(Backbone, Compiler);
