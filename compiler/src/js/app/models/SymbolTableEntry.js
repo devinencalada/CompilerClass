@@ -21,6 +21,17 @@
 		incrementReferences: function() {
 			this.set('references', this.attributes.references + 1);
 		}
+	}, {
+		/**
+		 * Static method used to create Symbol table entries
+		 */
+		createEntry: function(name, type, line) {
+			return new SymbolTableEntry({
+				name: name,
+				type: type,
+				line: line
+			});
+		}
 	});
 
 	Compiler.SymbolTableEntry = SymbolTableEntry;
