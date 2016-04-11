@@ -12,7 +12,8 @@
 			type: '',
 			line: -1,
 			scope: -1,
-			references: 0
+			references: 0,
+			initialized: false
 		},
 
 		/**
