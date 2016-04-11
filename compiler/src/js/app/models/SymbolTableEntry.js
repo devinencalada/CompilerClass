@@ -1,40 +1,36 @@
 /**
- * Classed used to represent entries in the
- * symbol table.
+ * Classed used to represent the scope table.
  */
 
 (function (Backbone, Compiler) {
 
-	var SymbolTableEntry = Backbone.Model.extend({
-		defaults: {
-			entry_number: -1,
-			name: '',
-			type: '',
-			line: -1,
-			scope: -1,
-			references: 0,
-			initialized: false
-		},
+	var ScopeTable = Backbone.Model.extend({
+		/**
+		 * @property {Compiler.SymbolTableEntry[]} entries - List of symbol entries
+		 */
+		entries: null,
 
 		/**
-		 * Increments the value of the number of references
+		 * @property {Int} nextEntryIndex - Next available symbol entry index
 		 */
-		incrementReferences: function() {
-			this.set('references', this.attributes.references + 1);
-		}
-	}, {
+		nextEntryIndex: 0,
+
 		/**
-		 * Static method used to create Symbol table entries
+		 * @property {Int} scopeLevel - Current scope level
 		 */
-		createEntry: function(name, type, line) {
-			return new SymbolTableEntry({
-				name: name,
-				type: type,
-				line: line
-			});
-		}
+		scopeLevel: -1,
+
+		/**
+		 * @property {Int} parentScope - Parent scope level
+		 */
+		parentScope: null,
+
+		/**
+		 * @property {Array} childScopes - List of child scopes
+		 */
+		childScopes: null
 	});
 
-	Compiler.SymbolTableEntry = SymbolTableEntry;
+	Compiler.ScopeTable = ScopeTable;
 
 })(Backbone, Compiler);
