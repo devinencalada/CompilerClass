@@ -151,6 +151,15 @@
 			return this.entries.findWhere({
 				name: name
 			});
+		},
+
+		/**
+		 * Adds a child scope table.
+		 *
+		 * @param {Compiler.ScopeTable} scopeTable
+		 */
+		addChildScopeTable: function(scopeTable) {
+			this.childScopeTables.push(scopeTable);
 		}
 	});
 
