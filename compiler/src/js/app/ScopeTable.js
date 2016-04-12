@@ -67,22 +67,22 @@
 		 * @returns {Boolean}
 		 */
 		hasEntry: function(name, node, optionalPath) {
-			var currScopeTable = this,
+			var scopeTable = this,
 				found = false;
 
 			Compiler.Logger.log('Checking if id ' + name + ' is in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
 
-			while (currScopeTable && !found)
+			while (scopeTable && !found)
 			{
-				var symbolTableEntry = currScopeTable.getEntry(name);
+				var symbolTableEntry = scopeTable.getEntry(name);
 
 				if (!symbolTableEntry)
 				{
-					currScopeTable = currScopeTable.parentScopeTable;
+					scopeTable = scopeTable.parentScopeTable;
 				}
 				else
 				{
-					Compiler.Logger.log('The id ' + name + ' at the scope level ' + currScopeTable.get('scope') + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
+					Compiler.Logger.log('The id ' + name + ' at the scope level ' + scopeTable.get('scope') + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
 
 					symbolTableEntry.incrementReferences();
 
@@ -102,7 +102,7 @@
 						}
 					}
 
-					node.setSymbolTableEntry(symbolTableEntry);
+					//node.setSymbolTableEntry(symbolTableEntry);
 
 					found = true;
 				}
@@ -112,28 +112,39 @@
 		},
 
 		/**
-		 * Detects variable warnings.
+		 * Returns all the variable warnings.
 		 *
 		 * @param {Compiler.ScopeTable} scopeTable
+		 *
+		 * @returns {Array}
 		 */
-		detectWarnings: function () {
+		getWarnings: function () {
 
-			this.entries.each(function(symbolTableEntry) {
-				if(symbolTableEntry.get('references') == 1)
-				{
-					Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' declared on line ' + symbolTableEntry.get('line') + ' was declared, but never used', Compiler.Logger.WARNING, Compiler.Logger.SCOPE_TABLE);
-				}
+			var warnings = [];
 
-				if(!symbolTableEntry.get('initialized'))
-				{
-					Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' declared on line ' + symbolTableEntry.get('line') + ' was never initialized', Compiler.Logger.WARNING, Compiler.Logger.SCOPE_TABLE);
-				}
-			});
-
-			for (var i = 0; i < scopeTable.childScopeTables.length; i++)
+			function traverse(scopeTable)
 			{
-				scopeTable.childScopeTables[i].detectWarnings();
+				scopeTable.entries.each(function(symbolTableEntry) {
+					if(symbolTableEntry.get('references') == 1)
+					{
+						warnings.push('Warning! The id ' + symbolTableEntry.get('name') + ' declared on line ' + symbolTableEntry.get('line') + ' was declared, but never used.');
+					}
+
+					if(!symbolTableEntry.get('initialized'))
+					{
+						warnings.push('Warning! The id ' + symbolTableEntry.get('name') + ' declared on line ' + symbolTableEntry.get('line') + ' was never initialized.');
+					}
+				});
+
+				for (var i = 0; i < scopeTable.childScopeTables.length; i++)
+				{
+					traverse(scopeTable.childScopeTables[i]);
+				}
 			}
+
+			traverse(this);
+
+			return warnings;
 		},
 
 		// Utility methods
