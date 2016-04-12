@@ -47,10 +47,7 @@
 				scope: this.scopeLevel
 			});
 
-			var exists = this.entries.findWhere({
-				name: symbolTableEntry.get('name')
-			});
-
+			var exists = this.getEntry(symbolTableEntry.get('name'));
 			if(exists)
 			{
 				return false;
@@ -80,9 +77,7 @@
 
 			while (currScopeTable && !found)
 			{
-				var symbolTableEntry = currScopeTable.findWhere({
-					name: name
-				});
+				var symbolTableEntry = currScopeTable.getEntry(name);
 
 				if (!symbolTableEntry)
 				{
@@ -142,6 +137,20 @@
 			{
 				scopeTable.detectWarnings(scopeTable.childScopeTables[i]);
 			}
+		},
+
+		// Utility methods
+
+		/**
+		 * Return the specified symbol table entry.
+		 *
+		 * @param {String} name
+		 * @returns {Compiler.SymbolTableEntry}
+		 */
+		getEntry: function(name) {
+			return this.entries.findWhere({
+				name: name
+			});
 		}
 	});
 
