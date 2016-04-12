@@ -80,10 +80,12 @@
 		},
 
 		/**
-		 * Detects the variable warnings
+		 * Detects the variable warnings.
+		 *
+		 * @returns {Array}
 		 */
-		detectWarnings: function() {
-			this.defaultScopeTable.detectWarnings();
+		getWarnings: function() {
+			return this.defaultScopeTable.getWarnings();
 		}
 	});
 
