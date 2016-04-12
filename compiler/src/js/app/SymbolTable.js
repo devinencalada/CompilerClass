@@ -26,6 +26,36 @@
 		},
 
 		/**
+		 * Sets the current scope.
+		 */
+		openScope: function() {
+			var scopeTable = new Compiler.ScopeTable({
+				scope: this.nextScopeNumber++
+			});
+
+			scopeTable.parentScopeTable = this.currentScopeTable;
+
+			this.currentScopeTable.addChildScopeTable(scopeTable);
+			this.currentScopeTable = scopeTable;
+		},
+
+		/**
+		 * Closes the current scope.
+		 */
+		closeScope: function() {
+			if(this.currentScopeTable.parentScopeTable)
+			{
+				this.currentScopeTable = this.currentScopeTable.parentScopeTable;
+			}
+			else
+			{
+				var errorMessage = 'Error! Attempt was made to move to non existent parent scope.';
+				Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.SCOPE_TABLE);
+				throw errorMessage;
+			}
+		},
+
+		/**
 		 * Adds an entry to the symbol table.
 		 *
 		 * @param {Compiler.SymbolTableEntry} symbolTableEntry
