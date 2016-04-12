@@ -17,9 +17,9 @@
 		nextEntryIndex: 0,
 
 		/**
-		 * @property {Int} scopeLevel - Current scope level
+		 * @property {Int} scope - Current scope level
 		 */
-		scopeLevel: -1,
+		scope: -1,
 
 		/**
 		 * @property {Compiler.ScopeTable} parentScopeTable - Parent scope table
@@ -40,11 +40,13 @@
 		 * Add entry to the symbol table.
 		 *
 		 * @param {Compiler.SymbolTableEntry} symbolTableEntry
+		 *
+		 * @returns {Boolean}
 		 */
 		addEntry: function(symbolTableEntry) {
 			symbolTableEntry.set({
 				entry_number: this.entries.length + 1,
-				scope: this.scopeLevel
+				scope: this.scope
 			});
 
 			var exists = this.getEntry(symbolTableEntry.get('name'));
@@ -67,7 +69,8 @@
 		 * @param {String} name
 		 * @param {Compiler.TreeNode} node
 		 * @param {String} optionalPath
-		 * @returns {boolean}
+		 *
+		 * @returns {Boolean}
 		 */
 		hasEntry: function(name, node, optionalPath) {
 			var currScopeTable = this,
@@ -85,7 +88,7 @@
 				}
 				else
 				{
-					Compiler.Logger.log('The id ' + name + ' at the scope level ' + currScopeTable.scopeLevel + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
+					Compiler.Logger.log('The id ' + name + ' at the scope level ' + currScopeTable.scope + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
 
 					symbolTableEntry.incrementReferences();
 
@@ -119,9 +122,9 @@
 		 *
 		 * @param {Compiler.ScopeTable} scopeTable
 		 */
-		detectWarnings: function (scopeTable) {
+		detectWarnings: function () {
 
-			scopeTable.entries.each(function(symbolTableEntry) {
+			this.entries.each(function(symbolTableEntry) {
 				if(symbolTableEntry.get('references') == 1)
 				{
 					Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' declared on line ' + symbolTableEntry.get('line') + ' was declared, but never used', Compiler.Logger.WARNING, Compiler.Logger.SCOPE_TABLE);
@@ -135,7 +138,7 @@
 
 			for (var i = 0; i < scopeTable.childScopeTables.length; i++)
 			{
-				scopeTable.detectWarnings(scopeTable.childScopeTables[i]);
+				scopeTable.childScopeTables[i].detectWarnings();
 			}
 		},
 
