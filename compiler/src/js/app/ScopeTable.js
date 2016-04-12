@@ -6,20 +6,14 @@
 
 	var ScopeTable = Backbone.Model.extend({
 
+		defaults: {
+			scope: -1 // Current scope level
+		},
+
 		/**
 		 * @property {Backbone.Collection} entries - List of symbol entries
 		 */
 		entries: null,
-
-		/**
-		 * @property {Int} nextEntryIndex - Next available symbol entry index
-		 */
-		nextEntryIndex: 0,
-
-		/**
-		 * @property {Int} scope - Current scope level
-		 */
-		scope: -1,
 
 		/**
 		 * @property {Compiler.ScopeTable} parentScopeTable - Parent scope table
@@ -46,7 +40,7 @@
 		addEntry: function(symbolTableEntry) {
 			symbolTableEntry.set({
 				entry_number: this.entries.length + 1,
-				scope: this.scope
+				scope: this.get('scope')
 			});
 
 			var exists = this.getEntry(symbolTableEntry.get('name'));
@@ -88,7 +82,7 @@
 				}
 				else
 				{
-					Compiler.Logger.log('The id ' + name + ' at the scope level ' + currScopeTable.scope + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
+					Compiler.Logger.log('The id ' + name + ' at the scope level ' + currScopeTable.get('scope') + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
 
 					symbolTableEntry.incrementReferences();
 
