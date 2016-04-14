@@ -98,7 +98,7 @@
 					{
 						if (!symbolTableEntry.get('initialized'))
 						{
-							Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' on line ' + node.token('line') + ' was used before being initialized first.', Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS, true);
+							Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' on line ' + node.token.get('line') + ' was used before being initialized first.', Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS, true);
 						}
 					}
 
