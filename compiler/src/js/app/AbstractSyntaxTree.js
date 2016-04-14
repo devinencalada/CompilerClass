@@ -139,7 +139,13 @@
 							charList += node.children[i].name;
 						}
 
-						ast.addNode(Compiler.TreeNode.createNode(charList, node.token, Compiler.AbstractSyntaxTree.LEAF_NODE));
+						var token = Compiler.Token.getTokenByType(Compiler.Token.T_STRING_EXPRESSION);
+						token.set({
+							code: charList,
+							line: node.children[0].token.get('line')
+						});
+
+						ast.addNode(Compiler.TreeNode.createNode(charList, token, Compiler.TreeNode.LEAF_NODE));
 						break;
 
 					case Compiler.ConcreteSyntaxTree.BOOLEAN_EXPRESSION_NODE:
@@ -149,14 +155,14 @@
 						{
 							var currentNode = node.children[i];
 
-							if (currentNode.name === "==")
+							if (currentNode.name === '==')
 							{
 								interiorNodePath = Compiler.AbstractSyntaxTree.EQUAL_NODE;
 								ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.EQUAL_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
 
 								comparisonOpFound = true;
 							}
-							else if (currentNode.name === "!=")
+							else if (currentNode.name === '!=')
 							{
 								interiorNodePath = Compiler.AbstractSyntaxTree.NOT_EQUAL_NODE;
 								ast.addNode(Compiler.TreeNode.createNode(Compiler.AbstractSyntaxTree.NOT_EQUAL_NODE, node.token, Compiler.TreeNode.BRANCH_NODE));
@@ -194,7 +200,7 @@
 					case Compiler.AbstractSyntaxTree.NOT_EQUAL_NODE:
 						if (node.children.length == 0 && !Compiler.AbstractSyntaxTree.isInvalidNode(node.name))
 						{
-							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.AbstractSyntaxTree.LEAF_NODE));
+							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.TreeNode.LEAF_NODE));
 						}
 
 						break;
@@ -202,7 +208,7 @@
 					case Compiler.AbstractSyntaxTree.DIGIT_NODE:
 						if (node.children.length == 0 && !Compiler.AbstractSyntaxTree.isInvalidNode(node.name))
 						{
-							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.AbstractSyntaxTree.LEAF_NODE));
+							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.TreeNode.LEAF_NODE));
 						}
 
 						endChildren = false;
@@ -212,7 +218,7 @@
 					case Compiler.AbstractSyntaxTree.BOOLEAN_EXPRESSION_NODE:
 						if (node.children.length == 0 && !Compiler.AbstractSyntaxTree.isInvalidNode(node.name))
 						{
-							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.AbstractSyntaxTree.LEAF_NODE));
+							ast.addNode(Compiler.TreeNode.createNode(node.name, node.token, Compiler.TreeNode.LEAF_NODE));
 						}
 
 						endChildren = false;
