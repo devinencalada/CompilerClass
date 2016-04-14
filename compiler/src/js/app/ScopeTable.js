@@ -70,7 +70,7 @@
 			var scopeTable = this,
 				found = false;
 
-			Compiler.Logger.log('Checking if id ' + name + ' is in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
+			Compiler.Logger.log('Checking if id ' + name + ' is in the symbol table.', Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS, true);
 
 			while (scopeTable && !found)
 			{
@@ -82,7 +82,7 @@
 				}
 				else
 				{
-					Compiler.Logger.log('The id ' + name + ' at the scope level ' + scopeTable.get('scope') + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
+					Compiler.Logger.log('The id ' + name + ' at the scope level ' + scopeTable.get('scope') + ' was in the symbol table.', Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS, true);
 
 					symbolTableEntry.incrementReferences();
 
@@ -98,7 +98,7 @@
 					{
 						if (!symbolTableEntry.get('initialized'))
 						{
-							Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' on line ' + node.token('line') + ' was used before being initialized first', Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS);
+							Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' on line ' + node.token('line') + ' was used before being initialized first.', Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS, true);
 						}
 					}
 
