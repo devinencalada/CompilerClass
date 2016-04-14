@@ -38,7 +38,7 @@
 
 			if (warnings.length > 0)
 			{
-				Compiler.Logger.log("Warnings", Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS);
+				Compiler.Logger.log("Warnings", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
 
 				for (var i = 0; i < warnings.length ; i++)
 				{
