@@ -63,8 +63,13 @@ function runProgram(sourceCode) {
 
 	if(parser.cst)
 	{
+		var ast = Compiler.AbstractSyntaxTree.makeAST(parser.cst),
+			semanticAnalyzer = new Compiler.SemanticAnalyzer();
+
 		printTree('CST', _.escape(parser.cst.toString()));
-		printTree('AST', _.escape(Compiler.AbstractSyntaxTree.makeAST(parser.cst)));
+		printTree('AST', _.escape(ast.toString()));
+
+		semanticAnalyzer.analyze(ast);
 	}
 
 	printLog();
