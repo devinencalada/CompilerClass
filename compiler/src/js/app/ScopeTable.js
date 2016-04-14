@@ -26,7 +26,7 @@
 		childScopeTables: null,
 
 		initialize: function() {
-			this.entries = Backbone.Collection();
+			this.entries = new Backbone.Collection();
 			this.childScopeTables = [];
 		},
 
