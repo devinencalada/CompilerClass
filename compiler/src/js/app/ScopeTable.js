@@ -49,7 +49,7 @@
 				return false;
 			}
 
-			Compiler.Logger.log('Inserting id ' + symbolTableEntry.get('name') + ' from line ' + symbolTableEntry.get('line') + ' into symbol table at scope: ' + symbolTableEntry.get('scope'), Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
+			Compiler.Logger.log('Inserting id ' + symbolTableEntry.get('name') + ' from line ' + symbolTableEntry.get('line') + ' into symbol table at scope: ' + symbolTableEntry.get('scope'), Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
 
 			this.entries.add(symbolTableEntry);
 
@@ -70,7 +70,7 @@
 			var scopeTable = this,
 				found = false;
 
-			Compiler.Logger.log('Checking if id ' + name + ' is in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
+			Compiler.Logger.log('Checking if id ' + name + ' is in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
 
 			while (scopeTable && !found)
 			{
@@ -82,7 +82,7 @@
 				}
 				else
 				{
-					Compiler.Logger.log('The id ' + name + ' at the scope level ' + scopeTable.get('scope') + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SCOPE_TABLE);
+					Compiler.Logger.log('The id ' + name + ' at the scope level ' + scopeTable.get('scope') + ' was in the symbol table', Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
 
 					symbolTableEntry.incrementReferences();
 
@@ -98,11 +98,11 @@
 					{
 						if (!symbolTableEntry.get('initialized'))
 						{
-							Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' on line ' + node.token('line') + ' was used before being initialized first', Compiler.Logger.WARNING, Compiler.Logger.SCOPE_TABLE);
+							Compiler.Logger.log('Warning! The id ' + symbolTableEntry.get('name') + ' on line ' + node.token('line') + ' was used before being initialized first', Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS);
 						}
 					}
 
-					//node.setSymbolTableEntry(symbolTableEntry);
+					node.symbolTableEntry = symbolTableEntry;
 
 					found = true;
 				}
