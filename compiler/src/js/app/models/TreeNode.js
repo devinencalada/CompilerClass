@@ -30,6 +30,11 @@
 		 */
 		kind: null,
 
+		/**
+		 * @property {Compiler.SymbolTableEntry} symbolTableEntry
+		 */
+		symbolTableEntry: null,
+
 		initialize: function() {
 			this.children = [];
 			this.parent = {};
@@ -51,6 +56,10 @@
 		 */
 		isBranch: function() {
 			return this.kind == Compiler.TreeNode.BRANCH_NODE;
+		},
+
+		setSynthesizedType: function() {
+
 		}
 	}, {
 
