@@ -5,6 +5,49 @@
 (function (Backbone, Compiler) {
 
 	var SemanticAnalyzer = Backbone.Model.extend({
+		/**
+		 * @property {Compiler.AbstractSyntaxTree} ast
+		 */
+		ast: null,
+
+		/**
+		 * @property {Compiler.SymbolTable} symbolTable
+		 */
+		symbolTable: null,
+
+		analyze: function(ast) {
+
+			Compiler.Logger.log("Performing Semantic Analysis", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
+
+			this.ast = ast;
+			this.symbolTable = Compiler.SymbolTable.makeSymbolTable(ast);
+
+			try
+			{
+				this._scopeTypeCheck();
+			}
+			catch(err)
+			{
+				Compiler.Logger.log(err, Compiler.Logger.ERROR, Compiler.Logger.SEMANTIC_ANALYSIS);
+				throw err;
+			}
+
+			Compiler.Logger.log("Semantic Analysis Complete");
+
+			var warnings = this.symbolTable.getWarnings();
+
+			if (warnings.length > 0)
+			{
+				Compiler.Logger.log("Warnings", Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS);
+
+				for (var i = 0; i < warnings.length ; i++)
+				{
+					Compiler.Logger.log(warnings[i], Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS);
+				}
+			}
+
+			Compiler.Logger.log("Semantic Analysis produced " + Compiler.Logger.getCount(Compiler.Logger.ERROR, Compiler.Logger.SEMANTIC_ANALYSIS)  + " error(s) and " + Compiler.Logger.getCount(Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS) + " warning(s).", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
+		},
 
 		/**
 		 * Traverses the specified tree and checks to make sure all
@@ -13,7 +56,7 @@
 		 * @param {Compiler.AbstractSyntaxTree} ast
 		 * @param {Compiler.SymbolTable} symbolTable
 		 */
-		typeCheck: function(ast, symbolTable) {
+		_scopeTypeCheck: function() {
 
 			function traverse(node, symbolTable)
 			{
@@ -80,7 +123,7 @@
 
 					if(leftSiblingType && rightSiblingType)
 					{
-						Compiler.Logger.log("Checking if " + leftSiblingType + " is type compatible with " + rightSiblingType + " on line " + node.children[0].get('line') + ".", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS, true);
+						Compiler.Logger.log("Checking if " + leftSiblingType + " is type compatible with " + rightSiblingType + " on line " + node.children[0].token.get('line') + ".", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS, true);
 
 						if (leftSiblingType === rightSiblingType)
 						{
@@ -95,7 +138,7 @@
 									typeToPropagate = 'boolean';
 								}
 
-								Compiler.Logger.log("Propagating the type " + typeToPropagate + " on line " + node.children[0].get('line') + " up to the parent " + parentNode.name + ".", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS, true);
+								Compiler.Logger.log("Propagating the type " + typeToPropagate + " on line " + node.children[0].token.get('line') + " up to the parent " + parentNode.name + ".", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS, true);
 
 								parentNode.setSiblingType(typeToPropagate);
 							}
@@ -104,25 +147,25 @@
 						}
 						else
 						{
-							var errorMessage = "Error! Type mismatch on line " + node.children[0].get('line') + ": " + node.children[0].name + " with the type " + leftSiblingType + " on the LHS does not match the type " + rightSiblingType + " on the RHS of the expression.";
+							var errorMessage = "Error! Type mismatch on line " + node.children[0].token.get('line') + ": " + node.children[0].name + " with the type " + leftSiblingType + " on the LHS does not match the type " + rightSiblingType + " on the RHS of the expression.";
 							Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.SEMANTIC_ANALYSIS);
 							throw errorMessage;
 						}
 					}
 					else if (leftSiblingType && !rightSiblingType)
 					{
-						Compiler.Logger.log("Setting type of " + node.name + " on line " + node.children[0].get('line') + " to " + leftSiblingType + ".", Compiler.Logger.ERROR, Compiler.Logger.SEMANTIC_ANALYSIS, true);
+						Compiler.Logger.log("Setting type of " + node.name + " to " + leftSiblingType + ".", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS, true);
 						node.type = leftSiblingType;
 					}
 					else if(!leftSiblingType && rightSiblingType)
 					{
-						Compiler.Logger.log("Setting type of " + node.name + " on line " + node.children[0].get('line') + " to " + rightSiblingType + ".", Compiler.Logger.ERROR, Compiler.Logger.SEMANTIC_ANALYSIS, true);
+						Compiler.Logger.log("Setting type of " + node.name + " to " + rightSiblingType + ".", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS, true);
 						node.type = rightSiblingType;
 					}
 				}
 			}
 
-			traverse(node.root, symbolTable);
+			traverse(this.ast.root, this.symbolTable);
 		}
 	});
 
