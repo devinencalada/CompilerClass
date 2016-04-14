@@ -7,17 +7,20 @@
 
 	var Logger = Backbone.Model.extend({
 
+	}, {
 		/**
-		 * @property {Backbone.Collection} logs
+		 * Log message type constants
 		 */
-		logs: null,
+		ERROR: 1,
+		INFO: 2,
+		WARNING: 3,
 
 		/**
-		 * Initializes the logs collection
+		 * Log message category constants
 		 */
-		initialize: function() {
-			this.logs = new Backbone.Collection();
-		},
+		LEXER: 1,
+		PARSER: 2,
+		SEMANTIC_ANALYSIS: 3,
 
 		/**
 		 *
@@ -27,7 +30,7 @@
 		 * @param {Bool} verbose - Set to true or false
 		 */
 		log: function(message, type, category, verbose) {
-			this.logs.add({
+			Logger.logs.add({
 				message: message,
 				type: type,
 				category: category,
@@ -44,46 +47,32 @@
 		getCount: function(type, category) {
 			if(!type && !category)
 			{
-				return this.logs.length;
+				return Logger.logs.length;
 			}
 			else if(type && !category)
 			{
-				return this.logs.where({
+				return Logger.logs.where({
 					type: type
 				}).length;
 			}
 			else if(!type && category)
 			{
-				return this.logs.where({
+				return Logger.logs.where({
 					category: category
 				}).length;
 			}
 			else
 			{
-				return this.logs.where({
+				return Logger.logs.where({
 					type: type,
 					category: category
 				}).length;
 			}
 		}
-
 	});
 
-	Compiler.Logger = new Logger();
+	Logger.logs = new Backbone.Collection();
 
-	/**
-	 * Log message types
-	 */
-	Compiler.Logger.ERROR = 1;
-	Compiler.Logger.INFO = 2;
-	Compiler.Logger.WARNING = 3;
-
-	/**
-	 * Log message categories
-	 */
-	Compiler.Logger.LEXER = 1;
-	Compiler.Logger.PARSER = 2;
-	Compiler.Logger.SCOPE_TABLE = 3;
-
+	Compiler.Logger = Logger;
 
 })(Backbone, Compiler);
