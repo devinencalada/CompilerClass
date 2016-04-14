@@ -16,6 +16,65 @@ function printTree(name, tree) {
 	}));
 }
 
+function printSymbolTable(symbolTable) {
+	var htmlTable = document.createElement('TABLE'),
+		firstScopeTable = symbolTable.currentScopeTable;
+
+	htmlTable.setAttribute('class', 'table table-striped table-bordered');
+
+	var row = htmlTable.insertRow(-1);
+	var idCell = row.insertCell(-1);
+	idCell.innerHTML = 'Name';
+
+	var typeCell = row.insertCell(-1);
+	typeCell.innerHTML = 'Type';
+
+	var scopeCell = row.insertCell(-1);
+	scopeCell.innerHTML = 'Scope';
+
+	var lineCell = row.insertCell(-1);
+	lineCell.innerHTML = 'Line #';
+
+	function printBody(currentScopeTable, htmlTable)
+	{
+		for (var entryIndex = 0; entryIndex < currentScopeTable.entries.length; entryIndex++)
+		{
+			var entry = currentScopeTable.entries.at(entryIndex);
+			if(entry)
+			{
+				var row = htmlTable.insertRow(-1);
+
+				var idCell = row.insertCell(-1);
+				idCell.innerHTML = entry.get('name');
+
+				var typeCell = row.insertCell(-1);
+				typeCell.innerHTML = entry.get('type');
+
+				var scopeCell = row.insertCell(-1);
+				scopeCell.innerHTML = currentScopeTable.get('scope');
+
+				var lineCell = row.insertCell(-1);
+				lineCell.innerHTML = entry.get('line');
+			}
+		}
+
+		var childScopeTables = currentScopeTable.childScopeTables;
+
+		if (childScopeTables.length > 0)
+		{
+			for (var childIndex = 0; childIndex < childScopeTables.length; childIndex++)
+			{
+				var childScope = childScopeTables[childIndex];
+				printBody(childScope, htmlTable);
+			}
+		}
+	}
+
+	printBody(firstScopeTable, htmlTable);
+
+	$("#output").append('<h3>Symbol Table</h3>').append($(htmlTable));
+}
+
 function printLog() {
 	// Get the logs
 	var verbose = $('input[type="checkbox"]').prop('checked');
@@ -70,6 +129,8 @@ function runProgram(sourceCode) {
 		printTree('AST', _.escape(ast.toString()));
 
 		semanticAnalyzer.analyze(ast);
+
+		printSymbolTable(semanticAnalyzer.symbolTable)
 	}
 
 	printLog();
