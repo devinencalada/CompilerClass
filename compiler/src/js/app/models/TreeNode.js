@@ -16,14 +16,29 @@
 		token: null,
 
 		/**
-		 * @property {Compiler.TreeNode[]} children
-		 */
-		children: null,
-
-		/**
 		 * @property {Compiler.TreeNode} parent
 		 */
 		parent: null,
+
+		/**
+		 * @property {String} type
+		 */
+		type: null,
+
+		/**
+		 * @property {String} leftSiblingType
+		 */
+		leftSiblingType: null,
+
+		/**
+		 * @property {String} rightSiblingType
+		 */
+		rightSiblingType: null,
+
+		/**
+		 * @property {Compiler.TreeNode[]} children
+		 */
+		children: null,
 
 		/**
 		 * @property {String} kind - "Branch or Leaf"
@@ -58,8 +73,26 @@
 			return this.kind == Compiler.TreeNode.BRANCH_NODE;
 		},
 
-		setSynthesizedType: function() {
-
+		/**
+		 * Sets this nodes sibling node type.
+		 *
+		 * @param {String} typeFromChild
+		 */
+		setSiblingType: function(siblingType) {
+			if(!this.leftSiblingType)
+			{
+				this.leftSiblingType = siblingType;
+			}
+			else if(!this.rightSiblingType)
+			{
+				this.rightSiblingType = siblingType;
+			}
+			else
+			{
+				var errorMessage = 'Error! Attempt was made to synthesize a type to a parent with its left and right types already set.';
+				Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.SEMANTIC_ANALYSIS);
+				throw errorMessage;
+			}
 		}
 	}, {
 
