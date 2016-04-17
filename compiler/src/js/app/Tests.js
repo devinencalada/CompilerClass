@@ -147,6 +147,10 @@ $(document).ready(function() {
 		{ name: "While", code: "\n{\n\tint x\n\tx = 0\n\n\twhile (x != 5) \n\t{\n\t\tprint(x)\n\t\tx = 1 + x\n\t}\n} $\n" },
 		{ name: "Boolean", code: "\n{\n\tint a\n\ta = 1\n\n\tboolean b\n\tb = (true == (true != (false == (true != (false != (a == a))))))\n\n\tprint(b)\n} $\n" },
 		{ name: "Type Decl Error", code: "\n{\n\tint 7\n\ta = 3\n} $\n" },
+		{ name: "Boolean Error", code: "\n{\n\tint a\n\ta = 4\n\tif (a = 4) {\n\t\tprint(\"hello world\")\n\t}\n} $\n" },
+		{ name: "Lexeme Error", code: "\n{\n\tint a\n\ta = 1\n\n\tif(a == 1) {\n\t\ta = 2\n\t}\n\n\telse(a != 1) {\n\t\ta = 3\n\t}\n} $\n" },
+		{ name: "Missing-Brace Error", code: "\n{\n\tint a\n\ta = 4\n\n\tint b\n\tb = 2 + a\n $\n" },
+		{ name: "Int over Digit Error", code: "\n{\n\tint a\n\ta = 42\n\n\tint b\n\tb = 2 + a\n} $\n" },
 	];
 
 	// Populate the textarea when a selection has been made
