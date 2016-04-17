@@ -678,6 +678,7 @@
 
 			var errorMessage = "Error on line {line}: " + message;
 			errorMessage = errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
+			errorMessage = errorMessage.fontcolor("red");
 
 			Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.PARSER);
 
