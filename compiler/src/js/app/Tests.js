@@ -146,6 +146,7 @@ $(document).ready(function() {
 		{ name: "If 3", code: "\n{\n\tint a\n\ta = 1\n\n\tif(a == 1) {\n\t\ta = 2\n\t}\n\n\tif(a != 1) {\n\t\ta = 3\n\t}\n} $\n" },
 		{ name: "While", code: "\n{\n\tint x\n\tx = 0\n\n\twhile (x != 5) \n\t{\n\t\tprint(x)\n\t\tx = 1 + x\n\t}\n} $\n" },
 		{ name: "Boolean", code: "\n{\n\tint a\n\ta = 1\n\n\tboolean b\n\tb = (true == (true != (false == (true != (false != (a == a))))))\n\n\tprint(b)\n} $\n" },
+		{ name: "Scope Test", code: "\n{\n\tint a\n\ta=9\n\tif (1 != 2) {\n\t\tint a\n\t\ta = 1\n\t\tif (a == 1){\n\t\t\tint b\n\t\t\tb=7\n\t\t\twhile (b != 7){\n\t\t\t\tstring c\n\t\t\t\tc = \"hello world\"\n\t\t\t}\n\t\t}\n\t}\n} $\n" },
 		{ name: "Type Decl Error", code: "\n{\n\tint 7\n\ta = 3\n} $\n" },
 		{ name: "Boolean Error", code: "\n{\n\tint a\n\ta = 4\n\tif (a = 4) {\n\t\tprint(\"hello world\")\n\t}\n} $\n" },
 		{ name: "Lexeme Error", code: "\n{\n\tint a\n\ta = 1\n\n\tif(a == 1) {\n\t\ta = 2\n\t}\n\n\telse(a != 1) {\n\t\ta = 3\n\t}\n} $\n" },
