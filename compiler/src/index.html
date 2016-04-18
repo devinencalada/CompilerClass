@@ -42,13 +42,15 @@
                                 <option value="4">If 3</option>
                                 <option value="5">While</option>
                                 <option value="6">Boolean</option>
-								<option value="7">Scope Test</option>
-								<option value="8">Type Decl Error</option>
-								<option value="9">Boolean Error</option>
-								<option value="10">Lexeme Error</option>
-								<option value="11">Missing-Brace Error</option>
-								<option value="12">Int over Digit Error</option>
-                                <option value="13">Run all</option>
+								<option value="7">Scope 1</option>
+								<option value="8">Scope 2</option>
+								<option value="9">Scope Warning</option>
+								<option value="10">Type Decl Error</option>
+								<option value="11">Boolean Error</option>
+								<option value="12">Lexeme Error</option>
+								<option value="13">Missing-Brace Error</option>
+								<option value="14">Int over Digit Error</option>
+                                <option value="15">Run all</option>
 								
                             </select>
                         </div>
@@ -121,8 +123,8 @@
             <div>
                 <h3>Log</h3>
                 <pre>
-<% _.each(logs, function(log, key, list) { %>
-<%= log.message %>
+<% _.each(logs, function(log, key, list) { %><% if(log.type == Compiler.Logger.ERROR) { %><%= log.message.fontcolor("red") %><% } else if(log.type == Compiler.Logger.WARNING) { %><%= log.message.fontcolor("#01DF01") %><% } else { %><%= log.message %>
+<% } %>
 <% }) %>
                 </pre>
             </div>
