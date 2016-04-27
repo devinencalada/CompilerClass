@@ -46,6 +46,7 @@
 			if(this.currentScopeTable.parentScopeTable)
 			{
 				this.currentScopeTable = this.currentScopeTable.parentScopeTable;
+				this.nextScopeNumber--;
 			}
 			else
 			{
