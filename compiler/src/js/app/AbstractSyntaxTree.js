@@ -140,10 +140,15 @@
 						}
 
 						var token = Compiler.Token.getTokenByType(Compiler.Token.T_STRING_EXPRESSION);
+
 						token.set({
-							code: charList,
-							line: node.children[0].token.get('line')
+							code: charList
 						});
+
+						if(charList != '')
+						{
+							token.set('line', node.children[0].token.get('line'));
+						}
 
 						ast.addNode(Compiler.TreeNode.createNode(charList, token, Compiler.TreeNode.LEAF_NODE));
 						break;
