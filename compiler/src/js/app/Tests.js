@@ -122,7 +122,7 @@ function runProgram(sourceCode) {
 
 	if(parser.cst)
 	{
-		var ast = Compiler.AbstractSyntaxTree.makeAST(parser.cst),
+		var ast = Compiler.AbstractSyntaxTree.makeAST(parser.scst),
 			semanticAnalyzer = new Compiler.SemanticAnalyzer();
 
 		printTree('CST', _.escape(parser.cst.toString()));

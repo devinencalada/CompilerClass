@@ -26,10 +26,16 @@
 		 */
 		cst: null,
 
+		/**
+		 * @property {Compiler.ConcreteSyntaxTree} scst - CST Tree
+		 */
+		scst: null,
+
 		parse: function(sourceCode) {
 			// Initialize properties
 			this.lexer = new Compiler.Lexer();
 			this.cst = new Compiler.ConcreteSyntaxTree();
+			this.scst = new Compiler.ConcreteSyntaxTree();
 			this.currentTokenIndex = 0;
 
 			try
@@ -40,6 +46,7 @@
 			{
 				this.lexer = null;
 				this.cst = null;
+				this.scst = null;
 				this.tokens = null;
 				this.currentTokenIndex = 0;
 				throw err;
@@ -52,6 +59,7 @@
 			catch(err)
 			{
 				this.cst = null;
+				this.scst = null;
 				throw err;
 			}
 		},
@@ -74,6 +82,7 @@
 
 			// Add Leaf Node to the CST
 			this.cst.addNode(Compiler.TreeNode.createNode(currentToken.get('code'), currentToken, Compiler.TreeNode.LEAF_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(currentToken.get('code'), currentToken, Compiler.TreeNode.LEAF_NODE));
 
 			this._getNextToken();
 		},
@@ -88,6 +97,7 @@
 			Compiler.Logger.log('Performing Parsing', Compiler.Logger.INFO, Compiler.Logger.PARSER);
 
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.PROGRAM_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.PROGRAM_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			this._parseBlock();
 			this._parseEOF();
@@ -104,6 +114,7 @@
 
 			// Add the "<Block>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.BLOCK_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.BLOCK_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			// Verify the current token is a "{"
 			Compiler.Logger.log('T_LBRACE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
@@ -134,6 +145,7 @@
 
 			// Close the "<Block>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -144,29 +156,36 @@
 		_parseStatementList: function() {
 			// Add the "<Statement List>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.STATEMENT_LIST_NODE, Compiler.TreeNode.BRANCH_NODE));
+			//this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.STATEMENT_LIST_NODE, Compiler.TreeNode.BRANCH_NODE));
 
-			var currentToken = this.getCurrentToken();
+			var statementFound = true;
 
-			switch(currentToken.get('type'))
+			while(statementFound)
 			{
-				case Compiler.Token.T_PRINT:
-				case Compiler.Token.T_ID:
-				case Compiler.Token.T_INT:
-				case Compiler.Token.T_STRING:
-				case Compiler.Token.T_BOOLEAN:
-				case Compiler.Token.T_WHILE:
-				case Compiler.Token.T_IF:
-				case Compiler.Token.T_LBRACE:
-					this._parseStatement();
-					this._parseStatementList();
-					break;
+				var currentToken = this.getCurrentToken();
+				switch(currentToken.get('type'))
+				{
+					case Compiler.Token.T_PRINT:
+					case Compiler.Token.T_ID:
+					case Compiler.Token.T_INT:
+					case Compiler.Token.T_STRING:
+					case Compiler.Token.T_BOOLEAN:
+					case Compiler.Token.T_WHILE:
+					case Compiler.Token.T_IF:
+					case Compiler.Token.T_LBRACE:
+						this._parseStatement();
+						statementFound = true;
+						break;
 
-				default:
-					break;
+					default:
+						statementFound = false;
+						break;
+				}
 			}
 
 			// Close the "<Statement List>" node in the CST tree
 			this.cst.endChildren();
+			//this.scst.endChildren();
 		},
 
 		/**
@@ -182,6 +201,7 @@
 		_parseStatement: function() {
 			// Add the "<Statement>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			var currentToken = this.getCurrentToken();
 
@@ -220,6 +240,7 @@
 
 			// Close the "<Statement>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -230,6 +251,7 @@
 		_parsePrintStatement: function() {
 			// Add the "<Print Statement>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.PRINT_STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.PRINT_STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			// Verify the current token is of type "T_PRINT"
 			Compiler.Logger.log('T_PRINT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
@@ -272,6 +294,7 @@
 
 			// Close the "<Print Statement>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -282,6 +305,7 @@
 		_parseAssignmentStatement: function() {
 			// Add the "<Assignment Statement>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.ASSIGNMENT_STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.ASSIGNMENT_STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			// Parse token of type T_ID
 			this._parseId();
@@ -303,6 +327,7 @@
 
 			// Close the "<Assignment Statement>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -313,12 +338,14 @@
 		_parseVariableDeclaration: function() {
 			// Add the "<Variable Declaration>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.VAR_DECLARATION_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.VAR_DECLARATION_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			this._parseType();
 			this._parseId();
 
 			// Close the "<Variable Statement>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -329,6 +356,7 @@
 		_parseWhileStatement: function() {
 			// Add the "<While Statement>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.WHILE_STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.WHILE_STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			Compiler.Logger.log('T_WHILE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -345,6 +373,7 @@
 
 			// Close the "<While Statement>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -356,6 +385,7 @@
 
 			// Add the "<If Statement>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.IF_STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.IF_STATEMENT_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			Compiler.Logger.log('T_IF expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -372,6 +402,7 @@
 
 			// Close the "<If Statement>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -385,6 +416,7 @@
 		_parseExpression: function() {
 			// Add the "<Expression>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.EXPRESSION_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.EXPRESSION_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			var currentToken = this.getCurrentToken();
 
@@ -415,6 +447,7 @@
 
 			// Close the "<Expression>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -426,6 +459,7 @@
 		_parseIntExpression: function() {
 			// Add the "<Int Expression>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.INT_EXPRESSION_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.INT_EXPRESSION_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			Compiler.Logger.log('T_DIGIT expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -446,6 +480,7 @@
 
 			// Close the "<Int Expression>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -497,6 +532,7 @@
 		_parseBooleanExpression: function() {
 			// Add the "<Boolean Expression>" node to the CST tree
 			this.cst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.BOOLEAN_EXPRESSION_NODE, Compiler.TreeNode.BRANCH_NODE));
+			this.scst.addNode(Compiler.TreeNode.createNode(Compiler.ConcreteSyntaxTree.BOOLEAN_EXPRESSION_NODE, Compiler.TreeNode.BRANCH_NODE));
 
 			Compiler.Logger.log('T_LPAREN, T_TRUE or T_FALSE expected!', Compiler.Logger.INFO, Compiler.Logger.PARSER, true);
 
@@ -534,6 +570,7 @@
 
 			// Close the "<Boolean Expression>" node in the CST tree
 			this.cst.endChildren();
+			this.scst.endChildren();
 		},
 
 		/**
@@ -678,7 +715,7 @@
 
 			var errorMessage = "Error on line {line}: " + message;
 			errorMessage = errorMessage.replace("{name}", token.get('name')).replace("{line}", token.get('line'));
-			
+
 
 			Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.PARSER);
 
