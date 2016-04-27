@@ -84,8 +84,16 @@
 				if (!node.children || node.children.length === 0)
 				{
 					// ... note the leaf node.
-					traversalResult += "[" + node.name + "]";
-					traversalResult += "\n";
+					if(node.isBranch())
+					{
+						traversalResult += "<" + node.name + ">";
+						traversalResult += "\n";
+					}
+					else
+					{
+						traversalResult += "[" + node.name + "]";
+						traversalResult += "\n";
+					}
 				}
 				else
 				{
