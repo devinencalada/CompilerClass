@@ -35,7 +35,24 @@
 
 	}, {
 		MAX_CODE_SIZE: 256,
-		NO_CODE: "00"
+		NO_CODE: "00",
+
+		/**
+		 * Converts the secified decimal to hex.
+		 * 0 Padding is added if necessary.
+		 *
+		 * @param {String} decimal
+		 * @returns {string}
+		 */
+		decimalToHex: function(decimal) {
+			var hex = decimal.toString(16);
+			if (hex.length === 1)
+			{
+				hex = '0' + hex;
+			}
+
+			return hex.toUpperCase();
+		}
 	});
 
 	Compiler.CodeGenerator = CodeGenerator;
