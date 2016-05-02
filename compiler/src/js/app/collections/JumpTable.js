@@ -6,6 +6,23 @@
 
 	var JumpTable = Collection.Model.extend({
 
+		model: Compiler.JumpTableEntry,
+
+		/**
+		 * Creates and adds an entry to the jump table.
+		 *
+		 * @returns {Compiler.JumpTableEntry}
+		 */
+		insertEntry: function() {
+
+			var entry = new Compiler.JumpTableEntry({
+				temp_name: 'J' + this.length.toString()
+			});
+
+			this.add(entry);
+
+			return entry;
+		}
 	});
 
 	Compiler.JumpTable = JumpTable;
