@@ -11,5 +11,3 @@
 	Compiler.JumpTable = JumpTable;
 
 })(Backbone, Compiler);
-
-// Created collection for the jump table

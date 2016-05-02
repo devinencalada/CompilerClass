@@ -12,5 +12,3 @@
 	Compiler.AssemblyCode = AssemblyCode;
 
 })(Backbone, Compiler);
-
-// Collection used to store the assembly code entries
