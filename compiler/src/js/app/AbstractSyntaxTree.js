@@ -88,7 +88,8 @@
 			 */
 			function traverse(node, interiorNodePath)
 			{
-				var endChildren = true;
+				var endChildren = true,
+					skipChildren = false;
 
 				switch (node.name)
 				{
@@ -132,27 +133,6 @@
 						interiorNodePath = Compiler.AbstractSyntaxTree.STRING_EXPRESSION_NODE;
 						break;
 
-					case Compiler.ConcreteSyntaxTree.CHAR_LIST_NODE:
-						var charList = '';
-						for (var i = 0; i < node.children.length; i++)
-						{
-							charList += node.children[i].name;
-						}
-
-						var token = Compiler.Token.getTokenByType(Compiler.Token.T_STRING_EXPRESSION);
-
-						token.set({
-							code: charList
-						});
-
-						if(charList != '')
-						{
-							token.set('line', node.children[0].token.get('line'));
-						}
-
-						ast.addNode(Compiler.TreeNode.createNode(charList, token, Compiler.TreeNode.LEAF_NODE));
-						break;
-
 					case Compiler.ConcreteSyntaxTree.BOOLEAN_EXPRESSION_NODE:
 						var comparisonOpFound = false;
 
@@ -181,10 +161,6 @@
 							interiorNodePath = Compiler.AbstractSyntaxTree.BOOLEAN_EXPRESSION_NODE;
 						}
 
-						break;
-
-					case Compiler.ConcreteSyntaxTree.STATEMENT_LIST_NODE:
-						interiorNodePath = null;
 						break;
 
 					default:
@@ -230,13 +206,46 @@
 
 						break;
 
+					case Compiler.AbstractSyntaxTree.STRING_EXPRESSION_NODE:
+						var charListNode = node.children[1];
+						var charList = '';
+						for (var i = 0; i < charListNode.children.length; i++)
+						{
+							charList += charListNode.children[i].name;
+						}
+
+						var token = Compiler.Token.getTokenByType(Compiler.Token.T_STRING_EXPRESSION);
+
+						token.set({
+							code: charList
+						});
+
+						if(charList != '')
+						{
+							token.set('line', node.children[0].token.get('line'));
+						}
+
+						ast.addNode(Compiler.TreeNode.createNode(charList, token, Compiler.TreeNode.LEAF_NODE));
+
+						endChildren = false;
+						skipChildren = true;
+
+						break;
+
 					default:
 						break;
 				}
 
-				for (var i = 0; i < node.children.length; i++)
+				if(!skipChildren)
 				{
-					traverse(node.children[i], interiorNodePath);
+					for (var i = 0; i < node.children.length; i++)
+					{
+						traverse(node.children[i], interiorNodePath);
+					}
+				}
+				else
+				{
+					skipChildren = false;
 				}
 
 				if (endChildren)
