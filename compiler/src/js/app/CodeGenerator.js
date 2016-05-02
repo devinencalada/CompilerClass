@@ -54,7 +54,7 @@
 					var newIndex = staticIndex + tempTableEntry.get('address_offset');
 					var hexLocation = Compiler.CodeGenerator.decimalToHex(newIndex);
 
-					if (parseInt(hexLocation, 16) < this.heapPointer)
+					if (parseInt(hexLocation, 16) < this.assemblyCode.heapPointer)
 					{
 						Compiler.Logger.log('Resolving entry of ' + currCodeByte + ' to: ' + hexLocation + '.', Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
@@ -66,7 +66,7 @@
 					else
 					{
 						var errorMessage = 'Error! Static space is clashing with heap space (beginning at ' + Compiler.Utils.decimalToHex(this.heapPointer) + ') when ' + tempTableEntry.get('temp_name') + ' was resolved to address ' + hexLocation + '.';
-						Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.CODE_GENERATOR, Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+						Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.CODE_GENERATOR);
 						throw errorMessage;
 					}
 				}
@@ -76,11 +76,49 @@
 					var jumpTableEntry = this.jumpTable.at(parseInt(currCodeByte.substring(1), 10));
 					var distanceToJump = Compiler.Utils.decimalToHex(jumpTableEntry.get('distance'));
 
-					Compiler.Logger.log('Resolving jump entry of ' + currCodeByte + ' to: ' + distanceToJump + '.');
+					Compiler.Logger.log('Resolving jump entry of ' + currCodeByte + ' to: ' + distanceToJump + '.', Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
 					this.assemblyCode.setCodeAt(distanceToJump, index);
 				}
 			}
+		},
+
+		/**
+		 * Adds the specified code to the heap.
+		 *
+		 * @param {String} strVal
+		 * @param {Number} line
+		 * @returns {number}
+		 */
+		addToHeap: function(strVal, line) {
+			Compiler.Logger.log("Adding the string \"" + strVal + "\" on line " + line + " to the heap.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+			// Add null terminator
+			strVal += "\0";
+
+			var heapStartAddress = this.assemblyCode.heapPointer - strVal.length;
+
+			// Check if heap clashes with static
+			var staticEndAddress = this.assemblyCode.currIndex;
+
+			if (heapStartAddress >= staticEndAddress)
+			{
+				for (var i = 0; i < strVal.length; i++)
+				{
+					var hexCode = Compiler.CodeGenerator.decimalToHex(strVal.charCodeAt(i));
+					this.assemblyCode.setCodeAt(hexCode, heapStartAddress + i);
+				}
+
+				this.assemblyCode.heapPointer = heapStartAddress;
+			}
+			else
+			{
+				var errorMessage = "Error! Heap overflow occured when trying to add string \"" + strVal + "\" on line " + line + " around the address " + Compiler.CodeGenerator.decimalToHex(heapStartAddress) + '.';
+				Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.CODE_GENERATOR);
+				throw errorMessage;
+			}
+
+			return this.assemblyCode.heapPointer;
 		}
 
 	}, {
