@@ -6,6 +6,8 @@
 
 	var CodeGenerator = Backbone.Model.extend({
 
+	}, {
+		MAX_CODE_SIZE: 256
 	});
 
 	Compiler.CodeGenerator = CodeGenerator;
