@@ -48,6 +48,23 @@
 			{
 				this.assemblyCode.add(Compiler.CodeGenerator.CODE_PLACEHOLDER);
 			}
+		},
+
+		/**
+		 * Creates and adds to the jump table
+		 * an instance of Compiler.JumpTableEntry.
+		 *
+		 * @returns {Compiler.JumpTableEntry}
+		 */
+		insertJumpTableEntry: function() {
+
+			var entry = new Compiler.JumpTableEntry({
+				temp_name: 'J' + this.jumpTable.length.toString()
+			});
+
+			this.jumpTable.add(entry);
+
+			return entry;
 		}
 
 	}, {
