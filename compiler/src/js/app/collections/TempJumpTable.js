@@ -6,7 +6,24 @@
 
 	var TempJumpTable = Collection.Model.extend({
 
-		model: Compiler.TempJumpTableEntry
+		model: Compiler.TempJumpTableEntry,
+
+		/**
+		 * Creates and adds an entry to the temp jump table.
+		 *
+		 * @returns {Compiler.TempJumpTableEntry}
+		 */
+		insertEntry: function() {
+
+			var entry = new Compiler.TempJumpTableEntry({
+				temp_name: 'T' + this.length.toString(),
+				address_offset: this.length
+			});
+
+			this.add(entry);
+
+			return entry;
+		}
 
 	});
 
