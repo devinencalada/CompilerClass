@@ -23,6 +23,33 @@
 			this.add(entry);
 
 			return entry;
+		},
+
+		/**
+		 * Returns an entry from the temp jump table by
+		 * the specified id name and scope level.
+		 *
+		 * @param {String} id - ID name
+		 * @param {Number} scope - Scope level
+		 * @returns {Compiler.TempJumpTable}
+		 */
+		getEntryById: function(id, scope) {
+
+			var entry = this.findWhere({
+				id_name: id,
+				scope: scope
+			});
+
+			if (entry)
+			{
+				return entry;
+			}
+			else
+			{
+				var errorMessage = 'Error! Id ' + id + ' was not found in the temp table.';
+				Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.CODE_GENERATOR);
+				throw errorMessage;
+			}
 		}
 
 	});
