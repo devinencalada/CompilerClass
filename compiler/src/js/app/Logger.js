@@ -21,6 +21,7 @@
 		LEXER: 1,
 		PARSER: 2,
 		SEMANTIC_ANALYSIS: 3,
+		CODE_GENERATOR: 4,
 
 		/**
 		 *
