@@ -65,6 +65,24 @@
 			this.jumpTable.add(entry);
 
 			return entry;
+		},
+
+		/**
+		 * Creates and adds to the temp jump table
+		 * an instance of Compiler.TempJumpTableEntry.
+		 *
+		 * @returns {Compiler.TempJumpTableEntry}
+		 */
+		insertTempJumpTableEntry: function() {
+
+			var entry = new Compiler.TempJumpTableEntry({
+				temp_name: 'T' + this.tempJumpTable.length.toString(),
+				address_offset: this.tempJumpTable.length
+			});
+
+			this.tempJumpTable.add(entry);
+
+			return entry;
 		}
 
 	}, {
