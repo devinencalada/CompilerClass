@@ -19,6 +19,26 @@
 			{
 				this.add({code: Compiler.CodeGenerator.NO_CODE});
 			}
+		},
+
+		/**
+		 * Insert the specified hex code input.
+		 *
+		 * @param {String} input - Hex code
+		 */
+		setCode: function(input) {
+			if ((this.currIndex + 1) <= this.heapPointer)
+			{
+				var entry = this.at(this.currIndex);
+				entry.set('code', input);
+				this.currIndex++;
+			}
+			else
+			{
+				var errorMessage = 'Error! Stack overflow at address ' + Compiler.CodeGenerator.decimalToHex(this.currIndex + 1) + ' when attempting to insert the code ' + input + '.';
+				Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.CODE_GENERATOR);
+				throw errorMessage;
+			}
 		}
 	});
 
