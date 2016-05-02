@@ -20,10 +20,10 @@
 			Compiler.Logger.log("Performing Semantic Analysis", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
 
 			this.ast = ast;
-			this.symbolTable = Compiler.SymbolTable.makeSymbolTable(ast);
 
 			try
 			{
+				this.symbolTable = Compiler.SymbolTable.makeSymbolTable(ast);
 				this._scopeTypeCheck();
 			}
 			catch(err)
@@ -33,15 +33,17 @@
 
 			Compiler.Logger.log("Semantic Analysis Complete");
 
-			var warnings = this.symbolTable.getWarnings();
-
-			if (warnings.length > 0)
+			if(this.symbolTable)
 			{
-				Compiler.Logger.log("Warnings", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
-
-				for (var i = 0; i < warnings.length ; i++)
+				var warnings = this.symbolTable.getWarnings();
+				if (warnings.length > 0)
 				{
-					Compiler.Logger.log(warnings[i], Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS);
+					Compiler.Logger.log("Warnings", Compiler.Logger.INFO, Compiler.Logger.SEMANTIC_ANALYSIS);
+
+					for (var i = 0; i < warnings.length ; i++)
+					{
+						Compiler.Logger.log(warnings[i], Compiler.Logger.WARNING, Compiler.Logger.SEMANTIC_ANALYSIS);
+					}
 				}
 			}
 
