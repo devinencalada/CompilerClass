@@ -122,7 +122,7 @@ function runProgram(sourceCode) {
 
 	if(parser.cst)
 	{
-		var ast = Compiler.AbstractSyntaxTree.makeAST(parser.scst),
+		var ast = Compiler.AbstractSyntaxTree.makeAST(parser.cst),
 			semanticAnalyzer = new Compiler.SemanticAnalyzer();
 
 		printTree('CST', _.escape(parser.cst.toString()));
@@ -130,7 +130,10 @@ function runProgram(sourceCode) {
 
 		semanticAnalyzer.analyze(ast);
 
-		printSymbolTable(semanticAnalyzer.symbolTable)
+		if(semanticAnalyzer.symbolTable)
+		{
+			printSymbolTable(semanticAnalyzer.symbolTable);
+		}
 	}
 
 	printLog();
