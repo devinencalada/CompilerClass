@@ -28,8 +28,7 @@
 			}
 			catch(err)
 			{
-				Compiler.Logger.log(err, Compiler.Logger.ERROR, Compiler.Logger.SEMANTIC_ANALYSIS);
-				throw err;
+
 			}
 
 			Compiler.Logger.log("Semantic Analysis Complete");
