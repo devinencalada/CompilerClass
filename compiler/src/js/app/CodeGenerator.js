@@ -62,6 +62,95 @@
 		},
 
 		/**
+		 * Insert the Add with Carry instructions into code
+		 * and returns the address of the sum's location.
+		 */
+		insertAddCode: function(locations) {
+			// Set accumulator to 0 so you can start adding
+			this.assemblyCode.setCode("A9");
+			this.assemblyCode.setCode("00");
+
+			while (locations.length > 0)
+			{
+				var address = locations.pop();
+
+				var firstByte = address.split(" ")[0],
+					secondByte = address.split(" ")[1];
+
+				// Add contents of the address to the accumulator
+				this.assemblyCode.setCode("6D");
+				this.assemblyCode.setCode(firstByte);
+				this.assemblyCode.setCode(secondByte);
+			}
+
+			// Create new entry for the location of the sum
+			var entry = this.tempJumpTable.insertEntry();
+
+			// Store the accumulator, now holding the sum, at an address in memory and return that address
+			this.assemblyCode.setCode("8D");
+			this.assemblyCode.setCode(entry.get('temp_name'));
+			this.assemblyCode.setCode("XX");
+
+			return entry.get('temp_name') + " " + "XX";
+		},
+
+		/**
+		 * Adds up numbers and returns the addresses where the
+		 * results are stored.
+		 *
+		 * @param {Compiler.TreeNode} node
+		 * @param {Array} addresses
+		 */
+		insertAddLocations: function(node, addresses)
+		{
+			if (node.isLeaf())
+			{
+				if (node.token.get('type') === Compiler.Token.T_ID)
+				{
+					// Get tempName of id
+					var id = node.name,
+						scope = node.symbolTableEntry.get('scope'),
+						tempName = this.tempJumpTable.getEntryById(id, scope).get('temp_name');
+
+					Compiler.Logger.log("Found id " + id + " to add.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+					var address = tempName + " " + "XX";
+
+					// Add address of tempName to list to be added together
+					addresses.push(address);
+				}
+				else if (node.token.get('type') === Compiler.Token.T_DIGIT)
+				{
+					var intLiteral = "0" + node.name;
+
+					// Load the accumulator with the int literal value
+					this.assemblyCode.setCode("A9");
+					this.assemblyCode.setCode(intLiteral);
+
+					// Create new temp table entry for the int literal (inefficient, but it works)
+					var entry = this.tempJumpTable.insertEntry();
+
+					// Store the accumulator at a new temp address
+					this.assemblyCode.setCode("8D");
+					this.assemblyCode.setCode(entry.get('temp_name'));
+					this.assemblyCode.setCode("XX");
+
+					Compiler.Logger.log("Found digit " + intLiteral + " to add.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+					var address = entry.get('temp_name') + " " + "XX";
+					addresses.push(address);
+				}
+			}
+
+			for (var i = 0; i < node.children.length; i++)
+			{
+				addresses = this.insertAddLocations(node.children[i], addresses);
+			}
+
+			return addresses;
+		},
+
+		/**
 		 * Resolves the entries in the jump table and temp jump table
 		 * with their actual hex code values.
 		 */
