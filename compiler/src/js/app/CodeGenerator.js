@@ -124,6 +124,11 @@
 	}, {
 		MAX_CODE_SIZE: 256,
 		NO_CODE: '00',
+		X_REGISTER_CODE: 'A2',
+		ACCUMULATOR_CODE: 'A9',
+		STORE_ACCUMULATOR_CODE: '8D',
+		COMPARE_CODE: 'EC',
+		BRANCH_BACK_CODE: 'D0',
 
 		/**
 		 * Converts the secified decimal to hex.
