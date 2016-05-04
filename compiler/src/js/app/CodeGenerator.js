@@ -34,6 +34,34 @@
 		},
 
 		/**
+		 * Translates a var declaration to assemblyCode code.
+		 *
+		 * @param {Compiler.TreeNode} node
+		 */
+		varDeclarationTmpl: function(node) {
+			var idName = node.children[1].name,
+				scope = node.children[1].symbolTableEntry.get('scope');
+
+			Compiler.Logger.log('Inserting Declararation of id ' + idName + '.', Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+			// Load accumulator with 0
+			this.assemblyCode.setCode(Compiler.CodeGenerator.ACCUMULATOR_CODE);
+			this.assemblyCode.setCode('00');
+
+			var entry = this.tempJumpTable.insertEntry();
+			entry.set({
+				id_name: idName,
+				scope: scope
+			});
+
+			// Store accumulator at temp address of id.
+			// The temp address will be replaced with the real value later on
+			this.assemblyCode.setCode(Compiler.CodeGenerator.STORE_ACCUMULATOR_CODE);
+			this.assemblyCode.setCode(entry.get('temp_name'));
+			this.assemblyCode.setCode('XX');
+		},
+
+		/**
 		 * Resolves the entries in the jump table and temp jump table
 		 * with their actual hex code values.
 		 */
