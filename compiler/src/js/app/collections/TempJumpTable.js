@@ -4,7 +4,7 @@
 
 (function (Backbone, Compiler) {
 
-	var TempJumpTable = Collection.Model.extend({
+	var TempJumpTable = Backbone.Collection.extend({
 
 		model: Compiler.TempJumpTableEntry,
 
