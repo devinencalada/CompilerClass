@@ -144,7 +144,7 @@
 		assignmentDeclarationTmpl: function(node) {
 			var idNode = node.children[0];
 			var id = idNode.name;
-			var idType = node.token.get('type');
+			var idType = node.token ? node.token.get('type') : null;
 
 			if(idType === Compiler.Token.T_DIGIT)
 			{
@@ -200,8 +200,7 @@
 				{
 					Compiler.Logger.log("Inserting Integer Assignment of addition result to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
-					var addressesToAdd = [];
-					addressesToAdd = this.insertAddLocations(rightChild, addressesToAdd);
+					var addressesToAdd = this.insertAddLocations(rightChild);
 
 					var addressOfSum = this.insertAddCode(addressesToAdd);
 					var firstByte = addressOfSum.split(" ")[0];
@@ -287,7 +286,7 @@
 				{
 					Compiler.Logger.log("Inserting Boolean Assignment of Boolean Expression to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
-					var addressOfResult = this.parseBooleanTree(rightChild);
+					var addressOfResult = this.parseBooleanExpression(rightChild);
 
 					var resultFirstByte = addressOfResult.split(" ")[0];
 					var resultSecondByte = addressOfResult.split(" ")[1];
@@ -312,7 +311,7 @@
 				var rightChild = node.children[1];
 
 				// Assigning a string literal
-				if (rightChild.token.get('type') === Compiler.Token.T_STRING_EXPRESSION)
+				if (rightChild.token && rightChild.token.get('type') === Compiler.Token.T_STRING_EXPRESSION)
 				{
 					var id = leftChild.name;
 					var value = rightChild.name;
@@ -334,7 +333,7 @@
 					this.assemblyCode.setCode(tempName.get('temp_name'));
 					this.assemblyCode.setCode("XX");
 				}
-				else if (rightChild.token.get('type') === Compiler.Token.T_ID)
+				else if (rightChild.token && rightChild.token.get('type') === Compiler.Token.T_ID)
 				{
 					var lhsId = leftChild.name;
 					var lhsScope = leftChild.symbolTableEntry.get('scope');
@@ -372,7 +371,7 @@
 
 			// Load accumulator with 0
 			this.assemblyCode.setCode(Compiler.CodeGenerator.ACCUMULATOR_CODE);
-			cg.assemblyCode.setCode('00');
+			this.assemblyCode.setCode('00');
 
 			var entry = this.tempJumpTable.insertEntry();
 			entry.set({
@@ -595,7 +594,7 @@
 			{
 				if (node.isLeaf())
 				{
-					if (node.token.get('type') === Compiler.Token.T_ID)
+					if (node.token && node.token.get('type') === Compiler.Token.T_ID)
 					{
 						// Get tempName of id
 						var id = node.name,
@@ -609,7 +608,7 @@
 						// Add address of tempName to list to be added together
 						addresses.push(address);
 					}
-					else if (node.token.get('type') === Compiler.Token.T_DIGIT)
+					else if (node.token && node.token.get('type') === Compiler.Token.T_DIGIT)
 					{
 						var intLiteral = "0" + node.name;
 
@@ -648,7 +647,7 @@
 		evaluateBooleanCondition: function(node) {
 			Compiler.Logger.log("Evaluating condition for if / while statement.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
-			if(node.token.get('type') === Compiler.Token.T_TRUE)
+			if(node.token && node.token.get('type') === Compiler.Token.T_TRUE)
 			{
 				Compiler.Logger.log("Condition of if / while statement is true.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
@@ -685,7 +684,7 @@
 
 				return jumpInfo;
 			}
-			else if(node.token.get('type') === Compiler.Token.T_FALSE)
+			else if(node.token && node.token.get('type') === Compiler.Token.T_FALSE)
 			{
 				Compiler.Logger.log("Condition of if / while statement is false.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
@@ -726,7 +725,7 @@
 			{
 				Compiler.Logger.log("Condition of if / while statement is a Boolean Expression.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
-				var addressOfResult = this.parseBooleanTree(root);
+				var addressOfResult = this.parseBooleanExpression(node);
 
 				var firstByte = addressOfResult.split(" ")[0];
 				var secondByte = addressOfResult.split(" ")[1];
@@ -950,7 +949,7 @@
 					}
 					else if(node.isLeaf())
 					{
-						if(node.token.get('type') === Compiler.Token.T_DIGIT)
+						if(node.token && node.token.get('type') === Compiler.Token.T_DIGIT)
 						{
 							Compiler.Logger.log("Propagating addresss of Int literal " + node.name + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
@@ -967,7 +966,7 @@
 
 							resultAddress = tempEntry.get('temp_name') + " " + "XX";
 						}
-						else if(node.token.get('type') === Compiler.Token.T_TRUE)
+						else if(node.token && node.token.get('type') === Compiler.Token.T_TRUE)
 						{
 							Compiler.Logger.log("Propagating addresss of Literal true.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
@@ -984,7 +983,7 @@
 
 							resultAddress = tempEntry.get('temp_name') + " " + "XX";
 						}
-						else if(node.token.get('type') === Compiler.Token.T_FALSE)
+						else if(node.token && node.token.get('type') === Compiler.Token.T_FALSE)
 						{
 							Compiler.Logger.log("Propagating addresss of Literal false.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
@@ -1001,7 +1000,7 @@
 
 							resultAddress = tempEntry.get('temp_name') + " " + "XX";
 						}
-						else if(node.token.get('type') === Compiler.Token.T_ID)
+						else if(node.token && node.token.get('type') === Compiler.Token.T_ID)
 						{
 							var idName = node.name,
 								scope = node.symbolTableEntry.get('scope');
@@ -1013,7 +1012,7 @@
 							// Pass back address of id, as it is already in memory
 							resultAddress = idTempName.get('temp_name') + " " + "XX";
 						}
-						else if(node.token.get('type') === Compiler.Token.T_STRING_EXPRESSION)
+						else if(node.token && node.token.get('type') === Compiler.Token.T_STRING_EXPRESSION)
 						{
 							var errorMessage = "Error! Comparison involving string literal on line " + node.token.get('line') + " is not supported.";
 							Compiler.Logger.log(errorMessage, Compiler.Logger.ERROR, Compiler.Logger.CODE_GENERATOR);
