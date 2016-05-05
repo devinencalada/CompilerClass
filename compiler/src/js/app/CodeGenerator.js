@@ -137,6 +137,229 @@
 		},
 
 		/**
+		 * Translates an assignment declaration to assemblyCode code.
+		 *
+		 * @param {Compiler.TreeNode} node
+		 */
+		assignmentDeclarationTmpl: function(node) {
+			var idNode = node.children[0];
+			var id = idNode.name;
+			var idType = node.token.get('type');
+
+			if(idType === Compiler.Token.T_DIGIT)
+			{
+				var rightChild = node.children[1];
+
+				if (rightChild.isLeaf())
+				{
+					var value = rightChild.name;
+
+					// Assigning a digit
+					if (rightChild.token.get('type') === Compiler.Token.T_DIGIT)
+					{
+						Compiler.Logger.log("Inserting Integer Assignment of " + value + " to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+						// Pad, as we can only have single digit literals
+						value = "0" + value;
+
+						// Load the accumulator with the value being stored
+						this.assemblyCode.setCode("A9");
+						this.assemblyCode.setCode(value);
+
+						var scope = idNode.symbolTableEntry.get('scope');
+						var tempName = this.tempJumpTable.getEntryById(id, scope);
+
+						// Store the accumulator at the address of the id
+						this.assemblyCode.setCode("8D");
+						this.assemblyCode.setCode(tempName.get('temp_name'));
+						this.assemblyCode.setCode("XX");
+					}
+					else if (rightChild.token.get('type') === Compiler.Token.T_ID)
+					{
+						Compiler.Logger.log("Inserting Integer Assignment of id " + value + " to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+						var rhsId = rightChild.name;
+						var rhsScope = rightChild.symbolTableEntry.get('scope');
+						var rhsTempName = this.tempJumpTable.getEntryById(rhsId, rhsScope);
+
+						// Load the data at the address of the RHS id into the accumulator
+						this.assemblyCode.setCode("AD");
+						this.assemblyCode.setCode(rhsTempName.get('temp_name'));
+						this.assemblyCode.setCode("XX");
+
+						var lhsScope = idNode.symbolTableEntry.get('scope');
+						var lhsTempName = this.tempJumpTable.getEntryById(id, lhsScope);
+
+						// Store the data in the accumulator at the address of the LHS id
+						this.assemblyCode.setCode("8D");
+						this.assemblyCode.setCode(lhsTempName.get('temp_name'));
+						this.assemblyCode.setCode("XX");
+					}
+				}
+				else
+				{
+					Compiler.Logger.log("Inserting Integer Assignment of addition result to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+					var addressesToAdd = [];
+					addressesToAdd = this.insertAddLocations(rightChild, addressesToAdd);
+
+					var addressOfSum = this.insertAddCode(addressesToAdd);
+					var firstByte = addressOfSum.split(" ")[0];
+					var secondByte = addressOfSum.split(" ")[1];
+
+					// Load contents of the address of the sum to accumulator
+					this.assemblyCode.setCode("AD");
+					this.assemblyCode.setCode(firstByte);
+					this.assemblyCode.setCode(secondByte);
+
+					var lhsScope = idNode.symbolTableEntry.get('scope');
+					var tempName = this.tempJumpTable.getEntryById(id, lhsScope);
+
+					// Store contents of the accumulator (containing sum of addition) in address of LHS id
+					this.assemblyCode.setCode("8D");
+					this.assemblyCode.setCode(tempName.get('temp_name'));
+					this.assemblyCode.setCode("XX");
+				}
+			}
+			else if (idType === Compiler.Token.T_TRUE
+				|| idType === Compiler.Token.T_FALSE)
+			{
+				var rightChild = node.children[1];
+
+				if (rightChild.isLeaf())
+				{
+					// Assigning true
+					if (rightChild.token.get('type') === Compiler.Token.T_TRUE)
+					{
+						Compiler.Logger.log("Inserting Boolean Assignment of Literal True to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+						// Load the accumulator with the value of 1 (for true)
+						this.assemblyCode.setCode("A9");
+						this.assemblyCode.setCode("01");
+
+						var scope = idNode.symbolTableEntry.get('scope');
+						var tempName = this.tempJumpTable.getEntryById(id, scope);
+
+						// Store the value of 1 (true) at the address of the id
+						this.assemblyCode.setCode("8D");
+						this.assemblyCode.setCode(tempName.get('temp_name'));
+						this.assemblyCode.setCode("XX");
+					}
+					else if (rightChild.token.get('type') === Compiler.Token.T_FALSE)
+					{
+						Compiler.Logger.log("Inserting Boolean Assignment of Literal False to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+						// Load the accumulator with the value of 0 (for false)
+						this.assemblyCode.setCode("A9");
+						this.assemblyCode.setCode("00");
+
+						var scope = idNode.symbolTableEntry.get('scope');
+						var tempName = this.tempJumpTable.getEntryById(id, scope);
+
+						// Store the value of 0 (false) at the address of the id
+						this.assemblyCode.setCode("8D");
+						this.assemblyCode.setCode(tempName.get('temp_name'));
+						this.assemblyCode.setCode("XX");
+					}
+					else if (rightChild.token.get('type') === Compiler.Token.T_ID)
+					{
+						var rhsId = rightChild.name;
+						var rhsScope = rightChild.symbolTableEntry.get('scope');
+						var rhsTempName = this.tempJumpTable.getEntryById(rhsId, rhsScope);
+
+						Compiler.Logger.log("Inserting Boolean Assignment of id " + rhsId + " to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+						// Load the data at the address of the RHS id into the accumulator
+						this.assemblyCode.setCode("AD");
+						this.assemblyCode.setCode(rhsTempName.get('temp_name'));
+						this.assemblyCode.setCode("XX");
+
+						var lhsScope = idNode.symbolTableEntry.get('scope');
+						var lhsTempName = this.tempJumpTable.getEntryById(id, lhsScope);
+
+						// Store the data in the accumulator at the address of the LHS id
+						this.assemblyCode.setCode("8D");
+						this.assemblyCode.setCode(lhsTempName.get('temp_name'));
+						this.assemblyCode.setCode("XX");
+					}
+				}
+				else
+				{
+					Compiler.Logger.log("Inserting Boolean Assignment of Boolean Expression to id " + id + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+					var addressOfResult = this.parseBooleanTree(rightChild);
+
+					var resultFirstByte = addressOfResult.split(" ")[0];
+					var resultSecondByte = addressOfResult.split(" ")[1];
+
+					// Load accumulator with address of result
+					this.assemblyCode.setCode("AD");
+					this.assemblyCode.setCode(resultFirstByte);
+					this.assemblyCode.setCode(resultSecondByte);
+
+					var lhsScope = idNode.symbolTableEntry.get('scope');
+					var lhsTempName = this.tempJumpTable.getEntryById(id, lhsScope);
+
+					// Store accumulator at address of id in assignment
+					this.assemblyCode.setCode("8D");
+					this.assemblyCode.setCode(lhsTempName.get('temp_name'));
+					this.assemblyCode.setCode("XX");
+				}
+			}
+			else
+			{
+				var leftChild = node.children[0];
+				var rightChild = node.children[1];
+
+				// Assigning a string literal
+				if (rightChild.token.get('type') === Compiler.Token.T_STRING_EXPRESSION)
+				{
+					var id = leftChild.name;
+					var value = rightChild.name;
+					var lineNumber = rightChild.token.get('line');
+
+					Compiler.Logger.log("Inserting String Assignment of id " + id + " to string \"" + value + "\".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+					var startAddress = Compiler.CodeGenerator.decimalToHex(this.addToHeap(value, lineNumber));
+
+					var scope = leftChild.symbolTableEntry.get('scope');
+					var tempName = this.tempJumpTable.getEntryById(id, scope);
+
+					// Load accumulator with the address of the string
+					this.assemblyCode.setCode("A9");
+					this.assemblyCode.setCode(startAddress);
+
+					// Store the value of the accumulator at the address of the string variable
+					this.assemblyCode.setCode("8D");
+					this.assemblyCode.setCode(tempName.get('temp_name'));
+					this.assemblyCode.setCode("XX");
+				}
+				else if (rightChild.token.get('type') === Compiler.Token.T_ID)
+				{
+					var lhsId = leftChild.name;
+					var lhsScope = leftChild.symbolTableEntry.get('scope');
+					var lhsTempName = this.tempJumpTable.getEntryById(lhsId, lhsScope);
+
+					var rhsId = rightChild.name;
+					var rhsScope = rightChild.symbolTableEntry.get('scope');
+					var rhsTempName = this.tempJumpTable.getEntryById(rhsId, rhsScope);
+
+					Compiler.Logger.log("Inserting String Assignment of id " + rhsId + " to id " + lhsId + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+					// Load accumulator with the address of the RHS string
+					this.assemblyCode.setCode("AD");
+					this.assemblyCode.setCode(rhsTempName.get('temp_name'));
+					this.assemblyCode.setCode("XX");
+
+					// Store value in accumulator as the address of the LHS string
+					this.assemblyCode.setCode("8D");
+					this.assemblyCode.setCode(lhsTempName.get('temp_name'));
+					this.assemblyCode.setCode("XX");
+				}
+			}
+		},
+
+		/**
 		 * Translates a var declaration to assemblyCode code.
 		 *
 		 * @param {Compiler.TreeNode} node
@@ -240,11 +463,11 @@
 
 				var id = firstChild.name,
 					scope = firstChild.symbolTableEntry.get('scope'),
-					tempName = this.tempJumpTable.getEntryById(id, scope).get('temp_name');
+					tempName = this.tempJumpTable.getEntryById(id, scope);
 
 				// Load the Y register from the memory address of the id
 				this.assemblyCode.setCode("AC");
-				this.assemblyCode.setCode(tempName);
+				this.assemblyCode.setCode(tempName.get('temp_name'));
 				this.assemblyCode.setCode("XX");
 
 				var type = firstChild.token.get('type');
@@ -377,11 +600,11 @@
 						// Get tempName of id
 						var id = node.name,
 							scope = node.symbolTableEntry.get('scope'),
-							tempName = cg.tempJumpTable.getEntryById(id, scope).get('temp_name');
+							tempName = cg.tempJumpTable.getEntryById(id, scope);
 
 						Compiler.Logger.log("Found id " + id + " to add.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
-						var address = tempName + " " + "XX";
+						var address = tempName.get('temp_name') + " " + "XX";
 
 						// Add address of tempName to list to be added together
 						addresses.push(address);
@@ -788,7 +1011,7 @@
 							Compiler.Logger.log("Propagating address of id " + idName + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
 							// Pass back address of id, as it is already in memory
-							resultAddress = idTempName + " " + "XX";
+							resultAddress = idTempName.get('temp_name') + " " + "XX";
 						}
 						else if(node.token.get('type') === Compiler.Token.T_STRING_EXPRESSION)
 						{
