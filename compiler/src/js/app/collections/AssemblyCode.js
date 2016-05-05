@@ -4,7 +4,7 @@
 
 (function (Backbone, Compiler) {
 
-	var AssemblyCode = Collection.Model.extend({
+	var AssemblyCode = Backbone.Collection.extend({
 
 		model: Compiler.AssemblyCodeEntry,
 
