@@ -69,12 +69,9 @@
 
 					case Compiler.AbstractSyntaxTree.WHILE_STATEMENT_NODE:
 						jumpBackIndex = cg.assemblyCode.currIndex;
-
 						var leftChild = node.children[0];
 						jumpPatchEntry = cg.evaluateBooleanCondition(leftChild);
-
 						inBlock = true;
-
 						break;
 
 					default:
@@ -94,30 +91,30 @@
 					if (jumpBackIndex !== -1)
 					{
 						// Load X register with 0
-						cg.assemblyCode.setCode(Compiler.CodeGenerator.X_REGISTER_CODE);
+						cg.assemblyCode.setCode("A2");
 						cg.assemblyCode.setCode('00');
 
 						// Store 1 in the temp jump table so we can reference back
 						var tempEntry = cg.tempJumpTable.insertEntry();
 
 						// Load accumulator with 1
-						cg.assemblyCode.setCode(Compiler.CodeGenerator.ACCUMULATOR_CODE);
+						cg.assemblyCode.setCode("A9");
 						cg.assemblyCode.setCode('01');
 
 						// Store accumulator at address of conditional result
-						cg.assemblyCode.setCode(Compiler.CodeGenerator.STORE_ACCUMULATOR_CODE);
+						cg.assemblyCode.setCode("8D");
 						cg.assemblyCode.setCode(tempEntry.get('temp_name'));
 						cg.assemblyCode.setCode('XX');
 
 						// Compare X Register (0) and Temp Entry (1)
-						cg.assemblyCode.setCode(Compiler.CodeGenerator.COMPARE_CODE);
+						cg.assemblyCode.setCode("EC");
 						cg.assemblyCode.setCode(tempEntry.get('temp_name'));
 						cg.assemblyCode.setCode('XX');
 
 						var jumpBackEntry = cg.jumpTable.insertEntry();
 
 						// Branch back to re-start the while loop
-						cg.assemblyCode.setCode(Compiler.CodeGenerator.BRANCH_BACK_CODE);
+						cg.assemblyCode.setCode("D0");
 						cg.assemblyCode.setCode(jumpBackEntry.get('temp_name'));
 
 						jumpBackEntry.set('distance', (Compiler.CodeGenerator.MAX_CODE_SIZE - (cg.assemblyCode.currIndex - jumpBackIndex)));
@@ -134,6 +131,38 @@
 			}
 
 			traverse(cg.ast.root);
+
+			Compiler.Logger.log("Inserting Break Statement.", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+			this.assemblyCode.setCode("00");
+			cg.resolveJumpEntries();
+		},
+
+		/**
+		 * Translates a var declaration to assemblyCode code.
+		 *
+		 * @param {Compiler.TreeNode} node
+		 */
+		varDeclarationTmpl: function(node) {
+			var idName = node.children[1].name,
+				scope = node.children[1].symbolTableEntry.get('scope');
+
+			Compiler.Logger.log('Inserting Declararation of id ' + idName + '.', Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
+
+			// Load accumulator with 0
+			this.assemblyCode.setCode("A9");
+			this.assemblyCode.setCode('00');
+
+			var entry = this.tempJumpTable.insertEntry();
+			entry.set({
+				id_name: idName,
+				scope: scope
+			});
+
+			// Store accumulator at temp address of id.
+			// The temp address will be replaced with the real value later on
+			this.assemblyCode.setCode("8D");
+			this.assemblyCode.setCode(entry.get('temp_name'));
+			this.assemblyCode.setCode('XX');
 		},
 
 		/**
@@ -144,9 +173,9 @@
 		assignmentDeclarationTmpl: function(node) {
 			var idNode = node.children[0];
 			var id = idNode.name;
-			var idType = node.token ? node.token.get('type') : null;
+			var idType = node.type;
 
-			if(idType === Compiler.Token.T_DIGIT)
+			if(idType === "int")
 			{
 				var rightChild = node.children[1];
 
@@ -220,8 +249,7 @@
 					this.assemblyCode.setCode("XX");
 				}
 			}
-			else if (idType === Compiler.Token.T_TRUE
-				|| idType === Compiler.Token.T_FALSE)
+			else if (idType === 'boolean')
 			{
 				var rightChild = node.children[1];
 
@@ -359,34 +387,6 @@
 		},
 
 		/**
-		 * Translates a var declaration to assemblyCode code.
-		 *
-		 * @param {Compiler.TreeNode} node
-		 */
-		varDeclarationTmpl: function(node) {
-			var idName = node.children[1].name,
-				scope = node.children[1].symbolTableEntry.get('scope');
-
-			Compiler.Logger.log('Inserting Declararation of id ' + idName + '.', Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
-
-			// Load accumulator with 0
-			this.assemblyCode.setCode(Compiler.CodeGenerator.ACCUMULATOR_CODE);
-			this.assemblyCode.setCode('00');
-
-			var entry = this.tempJumpTable.insertEntry();
-			entry.set({
-				id_name: idName,
-				scope: scope
-			});
-
-			// Store accumulator at temp address of id.
-			// The temp address will be replaced with the real value later on
-			this.assemblyCode.setCode(Compiler.CodeGenerator.STORE_ACCUMULATOR_CODE);
-			this.assemblyCode.setCode(entry.get('temp_name'));
-			this.assemblyCode.setCode('XX');
-		},
-
-		/**
 		 * Translates a print statement to assemblyCode code.
 		 *
 		 * @param {Compiler.TreeNode} node
@@ -469,11 +469,11 @@
 				this.assemblyCode.setCode(tempName.get('temp_name'));
 				this.assemblyCode.setCode("XX");
 
-				var type = firstChild.token.get('type');
+				var type = firstChild.type;
 
 				// Load 1 into X register to get ready to print an int / boolean
-				if (type === Compiler.Token.T_INT
-					|| type === Compiler.Token.T_BOOLEAN)
+				if (type === 'int'
+					|| type === 'boolean')
 				{
 					this.assemblyCode.setCode("A2");
 					this.assemblyCode.setCode("01");
@@ -636,6 +636,8 @@
 					traverse(node.children[i]);
 				}
 			}
+
+			traverse(node);
 
 			return addresses;
 		},
@@ -801,12 +803,13 @@
 								Compiler.Logger.log("Evaluating if " + leftFirstByte + " == " + rightFirstByte + ".", Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
 								// Result address
+
 								var tempEntry = cg.tempJumpTable.insertEntry(),
 									jumpEntryNotEqual = cg.jumpTable.insertEntry(),
 									jumpEntryEqual = cg.jumpTable.insertEntry();
 
-								cg.jumpTable.add(jumpEntryNotEqual);
-								cg.jumpTable.add(jumpEntryEqual);
+								cg.jumpTable.add(jumpEntryNotEqual.toJSON());
+								cg.jumpTable.add(jumpEntryEqual.toJSON());
 
 								// Store 0 in the result address as default
 								// Load accumulator with 0
@@ -876,8 +879,8 @@
 									jumpEntryNotEqual = cg.jumpTable.insertEntry(),
 									jumpEntryEqual = cg.jumpTable.insertEntry();
 
-								cg.jumpTable.add(jumpEntryNotEqual);
-								cg.jumpTable.add(jumpEntryEqual);
+								cg.jumpTable.add(jumpEntryNotEqual.toJSON());
+								cg.jumpTable.add(jumpEntryEqual.toJSON());
 
 								// Store 1 in the result address as default
 								// Load accumulator with 1
@@ -894,6 +897,7 @@
 								cg.assemblyCode.setCode(jumpEntryNotEqual.get('temp_name'));
 
 								var firstJumpIndex = cg.assemblyCode.currIndex;
+								console.log(firstJumpIndex);
 
 								// Case where true != true or false != false; both evaluate to false
 								// Load accumulator with 0 (false)
@@ -1024,7 +1028,9 @@
 				return resultAddress;
 			}
 
-			return traverse(node);
+			var r = traverse(node);
+
+			return r;
 		},
 
 		/**
@@ -1039,7 +1045,7 @@
 
 			for (var index = 0; index < staticIndex; index++)
 			{
-				currCodeByte = this.assemblyCode.at(index);
+				currCodeByte = this.assemblyCode.at(index).get('code');
 
 				// All temp jump table entries start with T
 				if (/^T/.test(currCodeByte))
@@ -1068,7 +1074,7 @@
 				else if (/^J/.test(currCodeByte))
 				{
 					var jumpTableEntry = this.jumpTable.at(parseInt(currCodeByte.substring(1), 10));
-					var distanceToJump = Compiler.Utils.decimalToHex(jumpTableEntry.get('distance'));
+					var distanceToJump = Compiler.CodeGenerator.decimalToHex(jumpTableEntry.get('distance'));
 
 					Compiler.Logger.log('Resolving jump entry of ' + currCodeByte + ' to: ' + distanceToJump + '.', Compiler.Logger.INFO, Compiler.Logger.CODE_GENERATOR, true);
 
