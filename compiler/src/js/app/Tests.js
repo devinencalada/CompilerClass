@@ -75,6 +75,13 @@ function printSymbolTable(symbolTable) {
 	$("#output").append('<h3>Symbol Table</h3>').append($(htmlTable));
 }
 
+function printHexCode(codeList) {
+	var codeTemplate = _.template($('#hex-code-template').text());
+	$("#output").append(codeTemplate({
+		code_list: codeList.toJSON()
+	}));
+}
+
 function printLog() {
 	// Get the logs
 	var verbose = $('input[type="checkbox"]').prop('checked');
@@ -133,6 +140,11 @@ function runProgram(sourceCode) {
 		if(semanticAnalyzer.symbolTable)
 		{
 			printSymbolTable(semanticAnalyzer.symbolTable);
+
+			var codeGenerator = new Compiler.CodeGenerator(ast);
+			codeGenerator.generateMachineCode();
+
+			printHexCode(codeGenerator.assemblyCode);
 		}
 	}
 
