@@ -145,5 +145,13 @@
     </div>
 </script>
 
+<script type="text/template" id="hex-code-template">
+    <h3>6502a Code</h3>
+    <div style="display: block;padding: 9.5px;margin: 0 0 10px;font-size: 13px;line-height: 1.42857143;color: #333;word-break: break-all;word-wrap: break-word;background-color: #f5f5f5;border: 1px solid #ccc;border-radius: 4px;">
+        <% for(var i = 0; i < code_list.length; i++) { %><%= code_list[i].code + " " %><% } %>
+    </div>
+</script>
+
+
 </body>
 </html>
